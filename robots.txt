@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://able-bodied-man.github.io/sitemap.xml

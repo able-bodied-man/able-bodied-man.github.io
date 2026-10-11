@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- index.html is the only standalone page; portfolio-1/2/3.html and
+       blog-post-1.html are AJAX fragments loaded into it, not full pages. -->
+  <url><loc>https://able-bodied-man.github.io/</loc><priority>1.0</priority></url>
+</urlset>
