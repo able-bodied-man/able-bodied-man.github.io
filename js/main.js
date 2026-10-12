@@ -8,17 +8,24 @@
 (function($) {
 "use strict";
     // Portfolio subpage filters
-    // Shuffle 6 has no jQuery wrapper, so the grid gets a single instance and its explicit
-    // API. filter() takes a category and matches the JSON in each item's data-groups
-    // attribute (filterMode 'any'), so the template's existing markup keeps working.
+    // Shuffle 7 ships as an ES module, so it may not be on the window when this runs: main.js is a
+    // classic script and can execute before the module in index.html. If it is missing, wait for the
+    // loader's one-shot 'shuffle:ready' event, and build the single instance only once either way.
+    var portfolioShuffle = null;
+
     function portfolio_init() {
         var grid = document.querySelector('.portfolio-grid');
 
-        if (!grid || typeof Shuffle === 'undefined') {
+        if (!grid || portfolioShuffle) {
             return;
         }
 
-        var shuffleInstance = new Shuffle(grid, {
+        if (typeof window.Shuffle === 'undefined') {
+            window.addEventListener('shuffle:ready', portfolio_init, { once: true });
+            return;
+        }
+
+        portfolioShuffle = new Shuffle(grid, {
             itemSelector: 'figure',
             speed: 450,
             filterMode: Shuffle.FilterMode.ANY
@@ -30,7 +37,7 @@
             $(this).parent().addClass('active');
 
             var group = $(this).attr('data-group');
-            shuffleInstance.filter(group === 'category_all' ? Shuffle.ALL_ITEMS : group);
+            portfolioShuffle.filter(group === 'category_all' ? Shuffle.ALL_ITEMS : group);
         });
     }
     // /Portfolio subpage filters

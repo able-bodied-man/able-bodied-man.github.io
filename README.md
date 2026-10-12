@@ -45,6 +45,11 @@ Verify with `curl -s https://able-bodied-man.github.io/ | sha256sum` against the
 - **reCAPTCHA removed.** The template shipped its author's reCAPTCHA site key, which is
   bound to a domain this site is not, so the widget could only ever fail. Re-add it with
   a key registered for `able-bodied-man.github.io` if you want captcha back.
+- **Shuffle 7 loads as an ES module.** Upstream publishes no UMD build for 7.x, so index.html has a
+  `<script type="module">` that imports `js/shuffle.esm.min.js` (minified here with terser - the
+  published ESM build is unminified, 39 KB vs 15 KB minified), assigns it to `window.Shuffle` and
+  fires a one-shot `shuffle:ready` event. `portfolio_init()` in `js/main.js` builds its single
+  instance either immediately or when that event arrives, so the classic script can run first.
 - **jQuery 3 compatibility shim.** `js/jquery3-compat.js` loads immediately after jQuery 4.0 and
   restores the nine helpers jQuery 4 removed (`$.camelCase`, `$.trim`, `$.type`, `$.isFunction`,
   `$.isArray`, `$.isNumeric`, `$.now`, `$.parseJSON`, `$.nodeName`). Two dependencies still call
