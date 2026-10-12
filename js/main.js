@@ -91,35 +91,78 @@
     }
     // /Custom scroll
 
-    // Contact form validator
-    $(function () {
+    // Contact form - built on the browser's own Constraint Validation API, which replaced the
+    // unmaintained validator.js (last release January 2017). Same presentation as before: the
+    // .form-group takes .has-error and its .help-block.with-errors carries the field's data-error
+    // text, which is exactly what this theme's CSS is keyed to. The form is marked novalidate so
+    // the browser never shows its own bubbles over the styled messages.
+    (function () {
+        var form = document.getElementById('contact_form');
+        if (!form) { return; }
 
-        $('#contact_form').validator();
+        var fields = Array.prototype.slice.call(form.querySelectorAll('[required]'));
 
-        $('#contact_form').on('submit', function (e) {
-            if (!e.isDefaultPrevented()) {
-                  // GitHub Pages serves static files only: there is no PHP runtime here, so the
-                // original contact_form/contact_form.php POST can never succeed. Hand the message
-                // to the visitor's own mail client instead. Change CONTACT_EMAIL to move the inbox.
-                // Built from parts so the address never appears as a literal in the
-                // source (the site displays "able_bodied_man [at] outlook.com" for the
-                // same anti-spam reason). \u0040 is "@".
-                var CONTACT_EMAIL = ["able_bodied_man", "outlook.com"].join("\u0040");
-
-                var body = $('#form_message').val() + "\n\n\u2014\n"
-                         + $('#form_name').val() + "\n" + $('#form_email').val();
-                var href = "mailto:" + CONTACT_EMAIL
-                         + "?subject=" + encodeURIComponent($('#form_subject').val())
-                         + "&body=" + encodeURIComponent(body);
-
-                $('#contact_form').find('.messages').html(
-                    '<div class="alert alert-success alert-dismissable">Opening your email app\u2026</div>');
-
-                window.location.href = href;
-                return false;
+        function setState(field, invalid) {
+            var group = field.closest('.form-group');
+            if (!group) { return; }
+            var help = group.querySelector('.help-block');
+            if (invalid) {
+                group.classList.add('has-error', 'has-danger');
+                if (help) { help.textContent = field.getAttribute('data-error') || 'Please check this field.'; }
+            } else {
+                group.classList.remove('has-error', 'has-danger');
+                if (help) { help.textContent = ''; }
             }
+        }
+
+        function validate(field) {
+            var invalid = !field.checkValidity();
+            setState(field, invalid);
+            return !invalid;
+        }
+
+        fields.forEach(function (field) {
+            // mirrors the old plugin: a flagged field clears as soon as it becomes valid, and a
+            // field with content is checked once the visitor leaves it
+            field.addEventListener('input', function () {
+                if (field.closest('.form-group').classList.contains('has-error')) { validate(field); }
+            });
+            field.addEventListener('blur', function () {
+                if (field.value !== '') { validate(field); }
+            });
         });
-    });
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            var valid = fields.map(function (f) { return validate(f); }).indexOf(false) === -1;
+            if (!valid) {
+                var firstInvalid = fields.filter(function (f) { return !f.checkValidity(); })[0];
+                if (firstInvalid) { firstInvalid.focus(); }
+                return;
+            }
+
+            // GitHub Pages serves static files only: there is no PHP runtime here, so the
+            // original contact_form/contact_form.php POST can never succeed. Hand the message
+            // to the visitor's own mail client instead. Change CONTACT_EMAIL to move the inbox.
+            // Built from parts so the address never appears as a literal in the
+            // source (the site displays "able_bodied_man [at] outlook.com" for the
+            // same anti-spam reason. \u0040 is "@".
+            var CONTACT_EMAIL = ["able_bodied_man", "outlook.com"].join("\u0040");
+
+            var body = document.getElementById('form_message').value + "\n\n\u2014\n"
+                     + document.getElementById('form_name').value + "\n" + document.getElementById('form_email').value;
+            var href = "mailto:" + CONTACT_EMAIL
+                     + "?subject=" + encodeURIComponent(document.getElementById('form_subject').value)
+                     + "&body=" + encodeURIComponent(body);
+
+            var messages = form.querySelector('.messages');
+            if (messages) {
+                messages.innerHTML = '<div class="alert alert-success alert-dismissable">Opening your email app\u2026</div>';
+            }
+
+            window.location.href = href;
+        });
+    })();
     // /Contact form validator
 
     //On Window load & Resize
