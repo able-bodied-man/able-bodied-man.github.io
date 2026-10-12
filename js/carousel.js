@@ -95,6 +95,11 @@ function setupRotation(root, kids, spec) {
   let dragging = false;
   let startX = 0;
   let dx = 0;
+  // bumped on every drag start; deferred callbacks (spring-back, layout restore) capture it and
+  // bail out if a newer drag has begun. Without this a stale timer fires mid-drag, drops the row
+  // layout while the pointer is still moving, and the move handler then offsets the stacked
+  // layout by whole slide widths - which sends every word off screen.
+  let dragGeneration = 0;
 
   const clear = (el) => el.classList.remove('animated-section-scaleUp', 'animated-section-scaleDown');
 
@@ -109,20 +114,23 @@ function setupRotation(root, kids, spec) {
 
   // move one word: step is +1 for the next, -1 for the previous.
   // returns the word that arrived, so a caller can wait for its entry animation.
-  const go = (step) => {
+  const go = (step, animate) => {
+    const fade = animate !== false;
     const prev = current;
     current = (current + step + kids.length) % kids.length;
     kids.forEach((el, i) => {
       clear(el);
       el.classList.toggle('is-active', i === current);
       if (i === current) {
-        play(el, 'animated-section-scaleUp');
+        if (fade) { play(el, 'animated-section-scaleUp'); }
       } else if (i === prev) {
+        if (!fade) { return; } // no fade: the slide carries it
         el.classList.add('is-active'); // stays visible while it animates out
         play(el, 'animated-section-scaleDown');
         el.addEventListener('animationend', function done() {
-          el.classList.remove('is-active');
           el.removeEventListener('animationend', done);
+          if (i === current) { return; } // it came back as the current word; leave it alone
+          el.classList.remove('is-active');
         }, { once: true });
       }
     });
@@ -137,6 +145,7 @@ function setupRotation(root, kids, spec) {
   };
 
   const beginDragLayout = () => {
+    dragGeneration++;
     // a word caught mid-fade would otherwise drag at its animated opacity; Owl's items were
     // always fully visible while dragging, so settle the transition first
     kids.forEach((el, i) => { clear(el); el.classList.toggle('is-active', i === current); });
@@ -148,6 +157,7 @@ function setupRotation(root, kids, spec) {
   // back to the stacked layout the fade needs - only safe once nothing is animating, otherwise
   // a half-faded word would jump sideways when the layout changes under it
   const endDragLayout = () => {
+    if (dragging) { return; } // never while the pointer is still down
     root.classList.remove('is-dragging', 'is-row-layout');
     track.style.transition = 'none';
     track.style.transform = 'translate3d(0px, 0px, 0px)';
@@ -168,22 +178,26 @@ function setupRotation(root, kids, spec) {
     dragging = false;
     if (Math.abs(dx) >= THRESHOLD) {
       // the word that was coming in from the side takes over and slides to the centre
-      const arrived = go(dx < 0 ? 1 : -1);
+      go(dx < 0 ? 1 : -1, false); // no fade: the word slid in already and just travels to centre
       dx = 0;
+      const token = dragGeneration;
       root.classList.remove('is-dragging'); // the hand relaxes, the row layout stays for the slide
       slideTrackTo(current, 300);
       const settle = () => {
-        arrived.removeEventListener('animationend', settle);
+        track.removeEventListener('transitionend', settle);
+        if (token !== dragGeneration) { return; } // a newer drag owns the layout now
         endDragLayout();
       };
-      if (arrived) { arrived.addEventListener('animationend', settle, { once: true }); }
-      setTimeout(settle, 1400); // guard if the animation never reports
+      track.addEventListener('transitionend', settle, { once: true });
+      setTimeout(settle, 600); // guard if the transition never reports
     } else {
       // not far enough: spring back to the word we came from, then restore the fade layout
+      const token = dragGeneration;
       track.style.transition = 'transform 0.25s ease';
       track.style.transform = 'translate3d(' + (-current * (root.clientWidth || root.offsetWidth || 1)) + 'px, 0px, 0px)';
       const done = () => {
         track.removeEventListener('transitionend', done);
+        if (token !== dragGeneration) { return; } // superseded by a newer drag
         dx = 0;
         endDragLayout();
       };
@@ -212,6 +226,10 @@ function setupRotation(root, kids, spec) {
 
   root.addEventListener('pointermove', (e) => {
     if (!dragging) { return; }
+    if (!root.classList.contains('is-row-layout')) {
+      root.classList.add('is-row-layout');
+      track.style.transition = 'none';
+    }
     dx = e.clientX - startX;
     track.style.transform = trackOffset();
   });
