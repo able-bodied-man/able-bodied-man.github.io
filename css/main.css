@@ -595,52 +595,49 @@ input[type="submit"]:focus {
 }
 
 /* --- Custom ScrollBar Customization --- */
-.ps>.ps__scrollbar-y-rail {
+/* perfect-scrollbar 1.x renamed its parts: .ps__scrollbar-y-rail -> .ps__rail-y,
+   .ps__scrollbar-y -> .ps__thumb-y, and the scrolling state .ps--in-scrolling.ps--y
+   -> .ps--scrolling-y. Same look, new hooks. */
+.ps > .ps__rail-y {
   margin-right: 10px;
   margin-top: 30px;
   margin-bottom: 30px;
   border-radius: 20px;
-}
-
-.ps>.ps__scrollbar-y-rail>.ps__scrollbar-y {
-  background-color: #b5b6b7;
-}
-
-.ps:hover>.ps__scrollbar-y-rail:hover {
-  background-color: #444;
-}
-
-.ps:hover>.ps__scrollbar-y-rail:hover>.ps__scrollbar-y {
-    background-color: #5050f5;
-}
-
-.ps>.ps__scrollbar-y-rail {
   width: 12px;
 }
 
-.ps>.ps__scrollbar-y-rail:hover>.ps__scrollbar-y, .ps>.ps__scrollbar-y-rail:active>.ps__scrollbar-y,
-.ps:hover.ps--in-scrolling.ps--y>.ps__scrollbar-y-rail>.ps__scrollbar-y,
-.ps.ps--in-scrolling.ps--y>.ps__scrollbar-y-rail>.ps__scrollbar-y {
-    width: 8px;
+.ps > .ps__rail-y > .ps__thumb-y {
+  width: 8px;
+  background-color: #b5b6b7;
 }
 
-.ps:hover.ps--in-scrolling.ps--y>.ps__scrollbar-y-rail {
+.ps:hover > .ps__rail-y:hover {
+  background-color: #444;
+}
+
+.ps > .ps__rail-y:hover > .ps__thumb-y,
+.ps > .ps__rail-y:active > .ps__thumb-y,
+.ps:hover.ps--scrolling-y > .ps__rail-y > .ps__thumb-y,
+.ps.ps--scrolling-y > .ps__rail-y > .ps__thumb-y {
+  background-color: #5050f5;
+}
+
+.ps:hover.ps--scrolling-y > .ps__rail-y {
   background-color: #555;
 }
 
-.ps:hover.ps--in-scrolling.ps--y>.ps__scrollbar-y-rail>.ps__scrollbar-y {
+.ps:hover.ps--scrolling-y > .ps__rail-y > .ps__thumb-y {
   background-color: #5050f5;
 }
 /* --- End Custom ScrollBar Customization --- */
 
-/* The plugin only absolutely-positions its rails via selectors scoped to a container
-   that carries its own .ps class. A section that misses that class leaves the y-rail
-   in normal flow as a 583px block element below .section-content, which renders as a
-   large empty scrollable area (clearest on the Contact page, under the Send button).
-   main.css loads after css/perfect-scrollbar.css, so this same-specificity selector
-   wins on document order and restores the overlay position. */
-.animated-section > .ps__scrollbar-y-rail,
-.animated-section > .ps__scrollbar-x-rail {
+/* Under perfect-scrollbar 0.8.1 a section that missed the plugin's own .ps class left the
+   y-rail in normal flow as a 583px block below .section-content - hundreds of pixels of
+   empty scrollable space (clearest on the Contact page, under the Send button). 1.x
+   positions its rails absolutely in its own stylesheet, so the fault cannot return; this
+   guard stays as a cheap prophylactic against a future regression. */
+.animated-section > .ps__rail-y,
+.animated-section > .ps__rail-x {
   position: absolute;
 }
 

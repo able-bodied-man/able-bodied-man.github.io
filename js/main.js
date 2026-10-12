@@ -50,15 +50,31 @@
     // /Hide Mobile menu
 
     // Custom scroll
+    // perfect-scrollbar 1.x dropped its jQuery wrapper, so each container gets its own
+    // instance, kept on the element itself: customScroll() creates or destroys them with
+    // the breakpoint and psUpdate() refreshes the geometry on resize.
+    function psUpdate() {
+        $('.animated-section, .single-page-content').each(function() {
+            if (this.__ps) {
+                this.__ps.update();
+            }
+        });
+    }
+
     function customScroll() {
         var windowWidth = $(window).width();
         if (windowWidth > 1024) {
             $('.animated-section, .single-page-content').each(function() {
-                $(this).perfectScrollbar();
+                if (window.PerfectScrollbar && !this.__ps) {
+                    this.__ps = new PerfectScrollbar(this);
+                }
             });
         } else {
             $('.animated-section, .single-page-content').each(function() {
-                $(this).perfectScrollbar('destroy');
+                if (this.__ps) {
+                    this.__ps.destroy();
+                    this.__ps = null;
+                }
             });
         }
     }
@@ -111,10 +127,8 @@
         })
         .on('resize', function() { //Resize
              mobileMenuHide();
-             $('.animated-section').each(function() {
-                $(this).perfectScrollbar('update');
-            });
-            customScroll();
+             psUpdate();
+             customScroll();
         });
 
 
