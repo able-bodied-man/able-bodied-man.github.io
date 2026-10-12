@@ -3085,19 +3085,19 @@ blockquote {
 }
 /* /Alerts */
 
-/* The copyright line is absolutely positioned, but .header is not a containing block
-   at desktop widths - so it was anchored to .page-content and landed under the sidebar
-   only because that frame's left edge happens to equal the sidebar's left edge and the
-   two widths happened to match. Make the sidebar the containing block and let the box
-   track its width, so the line centres in the sidebar at every width. Scoped to the
-   desktop range because the <=1024px layout positions .header absolutely. */
-@media only screen and (min-width: 1025px) {
-  .header {
-    position: relative;
-  }
+/* The copyright line is absolutely positioned while .header is not a containing block at
+   desktop widths, so the box anchors to .page-content instead - and .page-content's left
+   edge is the sidebar's left edge. The box therefore only has to be as wide as the sidebar
+   in each width band. The template's bug was that it stayed 380px while the sidebar narrows
+   to 330px in the 1025-1280 window, so the line's centre sat 25px right of the button's.
+   Size it per band (base rule covers 1281-1299, the >=1300 block covers the rest) and the
+   line stays centred on the photo, name and button at every width.
+
+   Do NOT "fix" this by giving .header position:relative: that makes the sidebar the nav
+   rail's containing block as well, and the rail (ul.main-menu, left:-86px) is then clipped
+   away by .header's own overflow:auto - every menu icon disappears. */
+@media only screen and (min-width: 1025px) and (max-width: 1280px) {
   .header .copyrights {
-    width: auto;
-    left: 0;
-    right: 0;
+    width: 330px;
   }
 }
