@@ -163,6 +163,29 @@ function setupRotation(root, kids, spec) {
     track.style.transform = 'translate3d(0px, 0px, 0px)';
   };
 
+  // Owl looped by cloning the end items, so the first word arrived from the right. Without clones
+  // the row can be rotated instead: move the word at the other end past the current one, shift the
+  // track by the matching slot in the same frame (nothing jumps), and the wrap then travels one
+  // slot like any other step.
+  const syncActive = () => kids.forEach((el, i) => el.classList.toggle('is-active', i === current));
+
+  const rotateRow = (forward) => {
+    if (forward) {
+      const el = kids.shift();
+      kids.push(el);
+      track.appendChild(el);
+      current -= 1;
+    } else {
+      const el = kids.pop();
+      kids.unshift(el);
+      track.insertBefore(el, track.firstChild);
+      current += 1;
+    }
+    syncActive();
+    track.style.transition = 'none';
+    track.style.transform = trackOffset();
+  };
+
   const slideTrackTo = (index, ms) => {
     const w = root.clientWidth || root.offsetWidth || 1;
     track.style.transition = 'transform ' + ms + 'ms ease';
@@ -178,7 +201,12 @@ function setupRotation(root, kids, spec) {
     dragging = false;
     if (Math.abs(dx) >= THRESHOLD) {
       // the word that was coming in from the side takes over and slides to the centre
-      go(dx < 0 ? 1 : -1, false); // no fade: the word slid in already and just travels to centre
+      const step = dx < 0 ? 1 : -1;
+      // stepping off either end rotates the row first, so the wrap moves one slot rather than
+      // sliding the whole row back - the arriving word still comes in from the drag's direction
+      if (step > 0 && current === kids.length - 1) { rotateRow(true); }
+      if (step < 0 && current === 0) { rotateRow(false); }
+      go(step, false); // no fade: the word slid in already and just travels to centre
       dx = 0;
       const token = dragGeneration;
       root.classList.remove('is-dragging'); // the hand relaxes, the row layout stays for the slide
