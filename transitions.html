@@ -48,6 +48,11 @@
             color:var(--dim); margin-top:12px; min-height:20px; }
     #meta b { color:var(--ink); }
     .progress { color:var(--dim); font-size:13px; }
+    .speedgroup { color:var(--dim); font-size:13px; display:inline-flex; align-items:center; gap:6px; }
+    .speed { padding:5px 10px; font-size:13px; }
+    .speed[aria-pressed="true"] { border-color:var(--accent); background:#2a2a44; color:var(--ink); }
+    .panel[data-speed-note] { outline:none; }
+    .slowhint { color:var(--accent); }
 
     .cases { display:grid; grid-template-columns:repeat(auto-fill, minmax(215px,1fr)); gap:8px; }
     .case { text-align:left; display:flex; align-items:center; gap:8px; padding:8px 10px; }
@@ -81,6 +86,12 @@
     <button id="playAll">&#9654; Play all 67</button>
     <button id="stop" disabled>&#9632; Stop</button>
     <button id="again" disabled>&#8635; Replay current</button>
+    <span class="speedgroup" role="group" aria-label="Playback speed">
+      speed:
+      <button class="speed" data-rate="1" aria-pressed="true">1&times;</button>
+      <button class="speed" data-rate="0.5" aria-pressed="false">0.5&times;</button>
+      <button class="speed" data-rate="0.25" aria-pressed="false">0.25&times;</button>
+    </span>
     <span class="progress" id="progress"></span>
   </div>
 
@@ -99,7 +110,7 @@ const panels = [document.getElementById('p0'), document.getElementById('p1')];
 const stage = document.getElementById('stage');
 const metaEl = document.getElementById('meta');
 const progressEl = document.getElementById('progress');
-let front = 0, busy = false, playing = false, timer = null, currentCase = null, pendingEnd = null;
+let front = 0, busy = false, playing = false, timer = null, currentCase = null, pendingEnd = null, rate = 1;
 
 function stripAnimClasses(el) {
   [...el.classList].filter(c => c.startsWith('animated-section-')).forEach(c => el.classList.remove(c));
@@ -130,6 +141,10 @@ function play(n, done) {
   out.classList.add('animating', ...c.out.split(' '));
   inn.classList.add('animating', ...c.in.split(' '));
   inn.classList.add('is-front');                // keep both painted while the pair animates
+  if (rate !== 1 && inn.getAnimations) {        // slow-motion: scale the running pair
+    inn.getAnimations().forEach(a => a.updatePlaybackRate(rate));
+    out.getAnimations().forEach(a => a.updatePlaybackRate(rate));
+  }
   let settled = false;
   const finish = () => {
     if (settled) return;
@@ -142,7 +157,7 @@ function play(n, done) {
   const onEnd = e => { if (e.target === inn) { inn.removeEventListener('animationend', onEnd); pendingEnd = null; finish(); } };
   inn.addEventListener('animationend', onEnd);
   pendingEnd = { el: inn, fn: onEnd };
-  timer = setTimeout(finish, (c.delay + c.duration) * 1000 + 400);   // fallback if animationend is missed
+  timer = setTimeout(finish, ((c.delay + c.duration) * 1000) / rate + 400);   // fallback if animationend is missed
   document.getElementById('again').disabled = false;
 }
 
@@ -170,6 +185,15 @@ document.getElementById('stop').onclick = () => {
   progressEl.textContent = 'stopped at ' + (currentCase || 0);
 };
 document.getElementById('again').onclick = () => currentCase && play(currentCase);
+document.querySelectorAll('.speed').forEach(b => {
+  b.onclick = () => {
+    rate = parseFloat(b.dataset.rate);
+    document.querySelectorAll('.speed').forEach(o =>
+      o.setAttribute('aria-pressed', o === b ? 'true' : 'false'));
+    [...document.querySelectorAll('.panel')].forEach(p =>
+      p.getAnimations && p.getAnimations().forEach(a => a.updatePlaybackRate(rate)));
+  };
+});
 
 // build the case buttons, grouped
 const host = document.getElementById('cases');
