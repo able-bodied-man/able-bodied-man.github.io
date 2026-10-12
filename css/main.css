@@ -3098,3 +3098,11 @@ blockquote {
     width: 330px;
   }
 }
+
+/* Bootstrap 5's grid takes its gutters from --bs-gutter-x (1.5rem = 24px at a 16px root),
+   while the template was laid out against Bootstrap 4's fixed 15px gutters. Pin the
+   variable to 30px so the 5.x grid reproduces the original spacing exactly (row margins
+   -15px, column padding 15px) instead of quietly tightening every column by 3px. */
+.row {
+  --bs-gutter-x: 30px;
+}

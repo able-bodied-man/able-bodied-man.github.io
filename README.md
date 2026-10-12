@@ -50,7 +50,8 @@ Verify with `curl -s https://able-bodied-man.github.io/ | sha256sum` against the
   `?v=<date>` token (currently `20261012.3`), in `index.html` and `transitions.html`. GitHub Pages
   caches assets for ~10 minutes and a normal reload happily reuses the stale file, which made
   earlier CSS fixes look like they never deployed. **Bump that token — same value
-  everywhere — in the same commit whenever any local css/js file changes**, library swaps
+  everywhere, and **never reuse a value that has already been published** (a browser that
+  cached the old bytes under that URL will keep serving them) — in the same commit whenever any local css/js file changes**, library swaps
   included, so visitors get the new bytes without a hard refresh.
 
 ## Still to do
