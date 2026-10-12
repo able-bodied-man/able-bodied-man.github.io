@@ -56,18 +56,31 @@ Verify with `curl -s https://able-bodied-man.github.io/ | sha256sum` against the
   published ESM build is unminified, 39 KB vs 15 KB minified), assigns it to `window.Shuffle` and
   fires a one-shot `shuffle:ready` event. `portfolio_init()` in `js/main.js` builds its single
   instance either immediately or when that event arrives, so the classic script can run first.
-- **jQuery 3 compatibility shim.** `js/jquery3-compat.js` loads immediately after jQuery 4.0 and
-  restores the nine helpers jQuery 4 removed (`$.camelCase`, `$.trim`, `$.type`, `$.isFunction`,
-  `$.isArray`, `$.isNumeric`, `$.now`, `$.parseJSON`, `$.nodeName`). Two dependencies still call
-  them: Owl Carousel 2.3.4 (camelCase/type/isNumeric) and validator.js 0.11.9 (trim). Both are the
-  final releases of unmaintained projects, so the shim keeps them working instead of patching them;
-  **delete it together with those two libraries** if they are ever replaced. Verified against
-  jQuery 3.7.1 as a control: identical carousel DOM, autoplay, nav, masonry, filter, lightbox,
-  validation and transition behaviour.
+- **Carousels are Embla, not Owl.** Owl Carousel's last release was April 2018. It is replaced by
+  Embla Carousel 8.6.0 (`js/embla/embla.js`, minified here from the published ESM build), driven by
+  `js/carousel.js`. Embla wants a `root > track > slides` structure and leaves the arrows to the
+  page, so that module builds the wrapper around the existing markup, creates the arrow buttons
+  with the look the theme gave Owl's nav, and re-initialises a carousel when its section becomes
+  visible (the sections start `display:none`, so a carousel measured at load sees a zero width and
+  cannot scroll). The role rotation keeps its fade-and-scale feel through a class on the selected
+  slide and a timer instead of the autoplay plugin; both plugins were measured as unnecessary here.
+  The portfolio detail fragments call the same factory through `window.lmCarousel` and keep the old
+  Owl class names on their controls (`legacyClasses`) because `main.css` already styles that
+  carousel through them. **To replace the three page carousel configs, edit `SPECS` in
+  `js/carousel.js`.**
+- **The contact form uses the browser's Constraint Validation API, not validator.js.** validator.js
+  0.11.9 (final release January 2017) only ever added `.has-error` to the `.form-group` and printed
+  the field's `data-error` text into the neighbouring `.help-block`, which is what this theme's CSS
+  is keyed to; the native API does the checking now, with identical classes, messages and
+  visibility. The form is `novalidate` so the browser's own bubbles never cover the styled messages
+  (`checkValidity()` works regardless). Validation lives at the top of `js/main.js`.
+- **No jQuery 3 compatibility shim any more.** One used to sit between jQuery 4 and its plugins,
+  serving Owl Carousel and validator.js — the two libraries replaced above. With both gone it was
+  deleted along with its tags; nothing in the tree calls the helpers jQuery 4 removed.
 - **Modernizr is a custom build.** `js/modernizr.custom.js` is generated from `modernizr-config.json` (5 detects + `prefixed`, minified) with `npx modernizr -c modernizr-config.json -d js/modernizr.custom.js` - the site only needs `cssanimations` and `prefixed`, and upstream ships no prebuilt bundle.
 - **`meta author`** no longer credits the template author.
 - **Asset cache busting.** Every local `css/` and `js/` asset is linked with a shared
-  `?v=<date>` token (currently `20261012.3`), in `index.html` and `transitions.html`. GitHub Pages
+  `?v=<date>` token (currently `20261012.18`), in `index.html` and `transitions.html`. GitHub Pages
   caches assets for ~10 minutes and a normal reload happily reuses the stale file, which made
   earlier CSS fixes look like they never deployed. **Bump that token — same value
   everywhere, and **never reuse a value that has already been published** (a browser that
