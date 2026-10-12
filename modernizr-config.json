@@ -1,0 +1,6 @@
+{
+  "classPrefix": "",
+  "minify": true,
+  "options": ["setClasses", "addTest", "prefixed"],
+  "feature-detects": ["css/animations", "css/transforms", "css/transforms3d", "css/transitions", "touchevents"]
+}

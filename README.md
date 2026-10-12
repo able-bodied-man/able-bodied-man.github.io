@@ -45,6 +45,7 @@ Verify with `curl -s https://able-bodied-man.github.io/ | sha256sum` against the
 - **reCAPTCHA removed.** The template shipped its author's reCAPTCHA site key, which is
   bound to a domain this site is not, so the widget could only ever fail. Re-add it with
   a key registered for `able-bodied-man.github.io` if you want captcha back.
+- **Modernizr is a custom build.** `js/modernizr.custom.js` is generated from `modernizr-config.json` (5 detects + `prefixed`, minified) with `npx modernizr -c modernizr-config.json -d js/modernizr.custom.js` - the site only needs `cssanimations` and `prefixed`, and upstream ships no prebuilt bundle.
 - **`meta author`** no longer credits the template author.
 - **Asset cache busting.** Every local `css/` and `js/` asset is linked with a shared
   `?v=<date>` token (currently `20261012.3`), in `index.html` and `transitions.html`. GitHub Pages
