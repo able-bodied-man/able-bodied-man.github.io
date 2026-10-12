@@ -1135,92 +1135,33 @@ textarea.form-control, textarea.form-control:focus {
   position: relative;
 }
 
-/* the rotation cross-fades in place with a slight scale, which is what the theme's
-   owl animateIn/animateOut pair (animated-section-scaleUp / scaleDown) did before */
+/* the rotation's slides are absolutely stacked, so they must be un-hidden explicitly: the
+   catch-all .text-rotation .item rule above hides the words until the module has wrapped them */
+.text-rotation.carousel .carousel-slide {
+  display: block;
+  flex-basis: 100%;
+}
+
+/* the rotation changes word exactly as it did under Owl: js/carousel.js puts the theme's own
+   .animated-section-scaleDown on the leaving word and .animated-section-scaleUp on the arriving
+   one, so the keyframes, the .7s duration and the scale .8 crossover are the theme's, unchanged */
 .text-rotation.carousel-fade .carousel-slide {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   opacity: 0;
-  -webkit-transition: opacity 0.6s ease, -webkit-transform 0.6s ease;
-  transition: opacity 0.6s ease, transform 0.6s ease;
-  -webkit-transform: scale(1.08);
-  transform: scale(1.08);
 }
 
 .text-rotation.carousel-fade .carousel-slide.is-active {
   opacity: 1;
-  -webkit-transform: scale(1);
-  transform: scale(1);
 }
 
-.text-rotation.carousel .carousel-slide {
-  display: block;
-  flex-basis: 100%;
-}
-
-.testimonials .carousel-track { gap: 25px; }
-.testimonials .carousel-slide { flex-basis: 100%; }
-.clients .carousel-track { gap: 10px; }
-.clients .carousel-slide { flex-basis: calc((100% - 10px) / 2); }
-
-@media only screen and (min-width: 768px) {
-  .testimonials .carousel-slide { flex-basis: calc((100% - 25px) / 2); }
-  .clients .carousel-slide { flex-basis: calc((100% - 30px) / 4); }
-}
-
-@media only screen and (min-width: 1200px) {
-  .clients .carousel-slide { flex-basis: calc((100% - 40px) / 5); }
-}
-
-.carousel-nav {
-  position: absolute;
-  text-align: right;
-  right: 0;
-  top: -52px;
-}
-
-.carousel-nav__btn {
-  position: relative;
-  display: inline-block;
-  background-color: #444;
-  border: 1px solid #444;
-  border-radius: 5px;
-  -webkit-transition-duration: 0.2s;
-  transition-duration: 0.2s;
-  font-family: "Font Awesome 7 Free";
-  font-size: 11px;
-  font-weight: 900;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #d5d5d5;
-  padding: 0;
-  cursor: pointer;
-}
-
-.carousel-nav__prev { margin-right: 3px; }
-
-.carousel-nav__btn:before {
-  position: relative;
-  margin: 2px;
-  width: 22px;
-  height: 22px;
-  line-height: 22px;
-  text-align: center;
-  display: block;
-  cursor: pointer;
-  color: inherit;
-  z-index: 1;
-}
-
-.carousel-nav__prev:before { content: "\f053"; }
-.carousel-nav__next:before { content: "\f054"; }
-
-.carousel-nav__btn:hover {
-  background-color: #5050f5;
-  border-color: #5050f5;
-  color: #fff;
+/* Owl's own stylesheet forced 1000ms on anything carrying .animated, so the theme's .7s never
+   applied to this rotation. Measured from the backup: both words animate over 1s, simultaneously. */
+.text-rotation.carousel-fade .carousel-slide {
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
 }
 
 /* dots - portfolio detail pages only */

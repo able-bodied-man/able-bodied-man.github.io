@@ -62,8 +62,13 @@ Verify with `curl -s https://able-bodied-man.github.io/ | sha256sum` against the
   page, so that module builds the wrapper around the existing markup, creates the arrow buttons
   with the look the theme gave Owl's nav, and re-initialises a carousel when its section becomes
   visible (the sections start `display:none`, so a carousel measured at load sees a zero width and
-  cannot scroll). The role rotation keeps its fade-and-scale feel through a class on the selected
-  slide and a timer instead of the autoplay plugin; both plugins were measured as unnecessary here.
+  cannot scroll). The role rotation reuses the theme's own `.animated-section-scaleDown` /
+  `.animated-section-scaleUp` pair — the same classes Owl was given via `animateIn`/`animateOut` — so
+  its keyframes and the scale .8 crossover are unchanged, and both words animate simultaneously over
+  the 1s Owl's own stylesheet forced on `.animated` (`main.css` sets that duration explicitly because
+  Owl's rules are no longer loaded). Autoplay is a plain 3.8s interval with no hover pause, matching
+  Owl's `autoplayTimeout: 3800` / `autoplayHoverPause: false`. Both Embla plugins were measured as
+  unnecessary here and are not vendored.
   The portfolio detail fragments call the same factory through `window.lmCarousel` and keep the old
   Owl class names on their controls (`legacyClasses`) because `main.css` already styles that
   carousel through them. **To replace the three page carousel configs, edit `SPECS` in

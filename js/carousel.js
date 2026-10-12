@@ -100,31 +100,56 @@ function setup(root, spec) {
   });
 
   if (spec.fade) {
-    // one slide in place: stack them and cross-fade, sizing the root to a single slide
+    // Owl ran the theme's own animateOut/animateIn pair here: the leaving word played
+    // .animated-section-scaleDown (fade to opacity 0 while shrinking to scale .8, .7s) and the
+    // arriving word played .animated-section-scaleUp (from opacity 0 / scale .8, .7s). Reuse those
+    // exact classes so the effect, its timing and its keyframes are the ones already in the theme.
     root.classList.add('carousel-fade');
     const sizeRoot = () => { root.style.height = kids[0].offsetHeight + 'px'; };
-    const syncFade = () => {
-      const current = embla.selectedScrollSnap();
-      kids.forEach((el, i) => el.classList.toggle('is-active', i === current));
+    let current = -1;
+
+    const swap = () => {
+      const next = embla.selectedScrollSnap();
+      if (next === current) { return; }
+      const prev = current;
+      current = next;
+      kids.forEach((el, i) => {
+        el.classList.remove('animated-section-scaleUp', 'animated-section-scaleDown');
+        el.classList.toggle('is-active', i === next);
+        if (i === next) {
+          if (prev !== -1) {
+            void el.offsetWidth; // restart the animation from its first keyframe
+            el.classList.add('animated-section-scaleUp');
+            el.addEventListener('animationend', function done() {
+              el.classList.remove('animated-section-scaleUp');
+              el.removeEventListener('animationend', done);
+            }, { once: true });
+          }
+        } else if (i === prev) {
+          // the leaving word has to stay visible while it animates out
+          el.classList.add('is-active', 'animated-section-scaleDown');
+          el.addEventListener('animationend', function done() {
+            el.classList.remove('animated-section-scaleDown', 'is-active');
+            el.removeEventListener('animationend', done);
+          }, { once: true });
+        }
+      });
     };
-    embla.on('select', syncFade);
-    embla.on('reInit', () => { sizeRoot(); syncFade(); });
-    sizeRoot(); syncFade();
+
+    embla.on('select', swap);
+    embla.on('reInit', () => { sizeRoot(); swap(); });
+    sizeRoot();
+    swap();
     window.addEventListener('resize', sizeRoot);
   }
 
   if (spec.autoplay) {
-    // was the Autoplay plugin; a plain timer is enough here and is easier to keep in step with
-    // the section visibility, and it pauses on hover as the theme's Owl setting did
-    let timer = null;
-    let paused = false;
-    const tick = () => { if (!paused && root.offsetParent !== null) { embla.scrollNext(); } };
-    const startTimer = () => { clearInterval(timer); timer = setInterval(tick, spec.autoplay); };
-    root.addEventListener('mouseenter', () => { paused = true; });
-    root.addEventListener('mouseleave', () => { paused = false; });
-    embla.on('reInit', startTimer);
-    embla.on('pointerDown', () => {});
-    startTimer();
+    // Owl ran with autoplayTimeout: 3800 and autoplayHoverPause: false, so this is a plain
+    // interval that keeps ticking - it just stands down while the section is hidden.
+    const timer = setInterval(() => {
+      if (root.offsetParent !== null) { embla.scrollNext(); }
+    }, spec.autoplay);
+    root.lmCarouselTimer = timer;
   }
 
   const nav = spec.arrows === false ? null : buildNav(root, spec.legacyClasses);
