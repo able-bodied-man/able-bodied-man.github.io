@@ -196,69 +196,8 @@
 
         customScroll();
 
-        // Text rotation
-        $('.text-rotation').owlCarousel({
-            loop: true,
-            dots: false,
-            nav: false,
-            margin: 0,
-            items: 1,
-            autoplay: true,
-            autoplayHoverPause: false,
-            autoplayTimeout: 3800,
-            animateOut: 'animated-section-scaleDown',
-            animateIn: 'animated-section-scaleUp'
-        });
-
-        // Testimonials Slider
-        $(".testimonials.owl-carousel").owlCarousel({
-            nav: true, // Show next/prev buttons.
-            items: 3, // The number of items you want to see on the screen.
-            loop: false, // Infinity loop. Duplicate last and first items to get loop illusion.
-            navText: false,
-            autoHeight: true,
-            margin: 25,
-            responsive : {
-                // breakpoint from 0 up
-                0 : {
-                    items: 1,
-                },
-                // breakpoint from 480 up
-                480 : {
-                    items: 1,
-                },
-                // breakpoint from 768 up
-                768 : {
-                    items: 2,
-                },
-                1200 : {
-                    items: 2,
-                }
-            }
-        });
-
-        // Clients Slider
-        $(".clients.owl-carousel").imagesLoaded().owlCarousel({
-            nav: true, // Show next/prev buttons.
-            items: 2, // The number of items you want to see on the screen.
-            loop: false, // Infinity loop. Duplicate last and first items to get loop illusion.
-            navText: false,
-            margin: 10,
-            autoHeight: true,
-            responsive : {
-                // breakpoint from 0 up
-                0 : {
-                    items: 2,
-                },
-                // breakpoint from 768 up
-                768 : {
-                    items: 4,
-                },
-                1200 : {
-                    items: 5,
-                }
-            }
-        });
+        // Carousels (role rotation, testimonials, clients) are set up by js/carousel.js,
+        // which replaced Owl Carousel 2 with Embla Carousel 8.
 
 
         //Form Controls

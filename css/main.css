@@ -1086,7 +1086,7 @@ textarea.form-control, textarea.form-control:focus {
 /* --- End of Testimonials --- */
 
 /* --- Clients --- */
-.clients.owl-carousel .client-block {
+.clients .client-block {
   padding: 15px;
   margin-bottom: 15px;
 }
@@ -1104,19 +1104,84 @@ textarea.form-control, textarea.form-control:focus {
 }
 /* --- End of Clients --- */
 
-/* --- Sliders Nav --- */
-.testimonials.owl-carousel .owl-nav,
-.clients.owl-carousel .owl-nav {
+/* --- Carousels (Embla Carousel 8, replacing Owl 2) ---
+   Embla wants root > track > slides and leaves the arrows to the page, so js/carousel.js builds
+   that wrapper around the existing markup. The arrow buttons keep the look the theme gave Owl's
+   nav: 28px rounded buttons, #444 fill, Font Awesome chevrons, accent on hover. The dots are
+   only used by the portfolio detail pages (the page carousels never showed visible dots). */
+.carousel {
+  position: relative;
+  overflow: hidden;
+}
+
+.carousel-track {
+  display: flex;
+  align-items: flex-start;
+}
+
+.carousel-slide {
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+/* role rotation: one word at a time, hidden until the module has wrapped them (Owl's stylesheet
+   used to hide the carousel until it initialised) */
+.text-rotation .item {
+  display: none;
+}
+
+.text-rotation.carousel .carousel-track {
+  display: block;
+  position: relative;
+}
+
+/* the rotation cross-fades in place with a slight scale, which is what the theme's
+   owl animateIn/animateOut pair (animated-section-scaleUp / scaleDown) did before */
+.text-rotation.carousel-fade .carousel-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  opacity: 0;
+  -webkit-transition: opacity 0.6s ease, -webkit-transform 0.6s ease;
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  -webkit-transform: scale(1.08);
+  transform: scale(1.08);
+}
+
+.text-rotation.carousel-fade .carousel-slide.is-active {
+  opacity: 1;
+  -webkit-transform: scale(1);
+  transform: scale(1);
+}
+
+.text-rotation.carousel .carousel-slide {
+  display: block;
+  flex-basis: 100%;
+}
+
+.testimonials .carousel-track { gap: 25px; }
+.testimonials .carousel-slide { flex-basis: 100%; }
+.clients .carousel-track { gap: 10px; }
+.clients .carousel-slide { flex-basis: calc((100% - 10px) / 2); }
+
+@media only screen and (min-width: 768px) {
+  .testimonials .carousel-slide { flex-basis: calc((100% - 25px) / 2); }
+  .clients .carousel-slide { flex-basis: calc((100% - 30px) / 4); }
+}
+
+@media only screen and (min-width: 1200px) {
+  .clients .carousel-slide { flex-basis: calc((100% - 40px) / 5); }
+}
+
+.carousel-nav {
   position: absolute;
   text-align: right;
   right: 0;
   top: -52px;
 }
 
-.testimonials.owl-carousel .owl-nav .owl-prev,
-.testimonials.owl-carousel .owl-nav .owl-next,
-.clients.owl-carousel .owl-nav .owl-prev,
-.clients.owl-carousel .owl-nav .owl-next {
+.carousel-nav__btn {
   position: relative;
   display: inline-block;
   background-color: #444;
@@ -1127,24 +1192,16 @@ textarea.form-control, textarea.form-control:focus {
   font-family: "Font Awesome 7 Free";
   font-size: 11px;
   font-weight: 900;
-  -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  text-rendering: auto;
+  -moz-osx-font-smoothing: grayscale;
   color: #d5d5d5;
+  padding: 0;
+  cursor: pointer;
 }
 
-.testimonials.owl-carousel .owl-nav .owl-prev,
-.clients.owl-carousel .owl-nav .owl-prev {
-    margin-right: 3px;
-}
+.carousel-nav__prev { margin-right: 3px; }
 
-.testimonials.owl-carousel .owl-nav .owl-prev:before,
-.testimonials.owl-carousel .owl-nav .owl-next:before,
-.clients.owl-carousel .owl-nav .owl-prev:before,
-.clients.owl-carousel .owl-nav .owl-next:before {
+.carousel-nav__btn:before {
   position: relative;
   margin: 2px;
   width: 22px;
@@ -1157,25 +1214,45 @@ textarea.form-control, textarea.form-control:focus {
   z-index: 1;
 }
 
-.testimonials.owl-carousel .owl-nav .owl-prev:before,
-.clients.owl-carousel .owl-nav .owl-prev:before {
-    content: "\f053";
+.carousel-nav__prev:before { content: "\f053"; }
+.carousel-nav__next:before { content: "\f054"; }
+
+.carousel-nav__btn:hover {
+  background-color: #5050f5;
+  border-color: #5050f5;
+  color: #fff;
 }
 
-.testimonials.owl-carousel .owl-nav .owl-next:before,
-.clients.owl-carousel .owl-nav .owl-next:before {
-    content: "\f054";
+/* dots - portfolio detail pages only */
+.carousel-dots {
+  display: inline-block;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin: 0 10px 5px;
+  text-align: center;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.testimonials.owl-carousel .owl-nav .owl-prev:hover,
-.testimonials.owl-carousel .owl-nav .owl-next:hover,
-.clients.owl-carousel .owl-nav .owl-prev:hover,
-.clients.owl-carousel .owl-nav .owl-next:hover {
-    background-color: #5050f5;
-    border-color: #5050f5;
-    color: #fff;
+.carousel-dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin: 5px;
+  padding: 0;
+  background: #f5f5f5;
+  border: 1px solid #9e9e9e;
+  border-radius: 0;
+  cursor: pointer;
+  -webkit-backface-visibility: visible;
+  transition: opacity 200ms ease;
 }
-/* --- End of Sliders Nav --- */
+
+.carousel-dot.is-active,
+.carousel-dot:hover {
+  background: #9e9e9e;
+}
+/* --- End of Carousels --- */
 
 
 /* --- Timeline (Education & Experience) --- */
