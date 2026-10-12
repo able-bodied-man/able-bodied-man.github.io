@@ -127,8 +127,25 @@ function setupRotation(root, kids, spec) {
     });
   };
 
-  const settle = () => {
-    track.style.transition = 'transform 0.3s ease';
+  // while dragging the words are laid out side by side, so the track has to sit at the current
+  // word's slot plus the drag offset; releasing returns it to the stacked fade layout
+  const trackOffset = () => {
+    const w = root.clientWidth || root.offsetWidth || 1;
+    return 'translate3d(' + (-current * w + dx) + 'px, 0px, 0px)';
+  };
+
+  const beginDragLayout = () => {
+    // a word caught mid-fade would otherwise drag at its animated opacity; Owl's items were
+    // always fully visible while dragging, so settle the transition first
+    kids.forEach((el, i) => { clear(el); el.classList.toggle('is-active', i === current); });
+    root.classList.add('is-dragging');
+    track.style.transition = 'none';
+    track.style.transform = trackOffset();
+  };
+
+  const endDragLayout = () => {
+    root.classList.remove('is-dragging');
+    track.style.transition = 'none';
     track.style.transform = 'translate3d(0px, 0px, 0px)';
   };
 
@@ -139,10 +156,22 @@ function setupRotation(root, kids, spec) {
   const endDrag = () => {
     if (!dragging) { return; }
     dragging = false;
-    root.classList.remove('is-dragging');
-    if (Math.abs(dx) >= THRESHOLD) { go(dx < 0 ? 1 : -1); }
-    dx = 0;
-    settle();
+    if (Math.abs(dx) >= THRESHOLD) {
+      go(dx < 0 ? 1 : -1);
+      dx = 0;
+      endDragLayout();
+    } else {
+      // not far enough: spring back to the word we came from, then restore the fade layout
+      track.style.transition = 'transform 0.25s ease';
+      track.style.transform = 'translate3d(' + (-current * (root.clientWidth || root.offsetWidth || 1)) + 'px, 0px, 0px)';
+      const done = () => {
+        track.removeEventListener('transitionend', done);
+        dx = 0;
+        endDragLayout();
+      };
+      track.addEventListener('transitionend', done, { once: true });
+      setTimeout(done, 400);
+    }
     restartTimer();
   };
 
@@ -157,8 +186,7 @@ function setupRotation(root, kids, spec) {
     dragging = true;
     startX = e.clientX;
     dx = 0;
-    root.classList.add('is-dragging');
-    track.style.transition = 'none';
+    beginDragLayout();
     if (root.setPointerCapture && e.pointerId !== undefined) {
       try { root.setPointerCapture(e.pointerId); } catch (err) { /* capture is a nicety, not required */ }
     }
@@ -167,7 +195,7 @@ function setupRotation(root, kids, spec) {
   root.addEventListener('pointermove', (e) => {
     if (!dragging) { return; }
     dx = e.clientX - startX;
-    track.style.transform = 'translate3d(' + dx + 'px, 0px, 0px)';
+    track.style.transform = trackOffset();
   });
 
   root.addEventListener('pointerup', endDrag);

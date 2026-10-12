@@ -1164,7 +1164,32 @@ textarea.form-control, textarea.form-control:focus {
 .text-rotation.carousel {
   -ms-touch-action: pan-y;
   touch-action: pan-y; /* drag horizontally, still scroll the page vertically */
-  cursor: default;
+  cursor: grab; /* Owl carried cursor: grab; the hand also advertises the drag */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none; /* Owl set this on its items; without it a drag selects the words */
+}
+
+.text-rotation.carousel.is-dragging {
+  cursor: grabbing;
+}
+
+/* while the pointer is down the words sit side by side, so the next one is already visible
+   entering from the side - the phone-swipe feel - instead of the stacked fade layout */
+.text-rotation.carousel.is-dragging .carousel-track {
+  display: flex;
+  align-items: flex-start;
+}
+
+.text-rotation.carousel.is-dragging .carousel-slide {
+  position: relative;
+  top: auto;
+  left: auto;
+  flex: 0 0 100%;
+  opacity: 1;
 }
 
 .text-rotation.carousel-fade .carousel-slide {
@@ -1184,7 +1209,32 @@ textarea.form-control, textarea.form-control:focus {
 .text-rotation.carousel {
   -ms-touch-action: pan-y;
   touch-action: pan-y; /* drag horizontally, still scroll the page vertically */
-  cursor: default;
+  cursor: grab; /* Owl carried cursor: grab; the hand also advertises the drag */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none; /* Owl set this on its items; without it a drag selects the words */
+}
+
+.text-rotation.carousel.is-dragging {
+  cursor: grabbing;
+}
+
+/* while the pointer is down the words sit side by side, so the next one is already visible
+   entering from the side - the phone-swipe feel - instead of the stacked fade layout */
+.text-rotation.carousel.is-dragging .carousel-track {
+  display: flex;
+  align-items: flex-start;
+}
+
+.text-rotation.carousel.is-dragging .carousel-slide {
+  position: relative;
+  top: auto;
+  left: auto;
+  flex: 0 0 100%;
+  opacity: 1;
 }
 
 .text-rotation.carousel-fade .carousel-slide {
