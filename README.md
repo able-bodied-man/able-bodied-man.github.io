@@ -46,6 +46,11 @@ Verify with `curl -s https://able-bodied-man.github.io/ | sha256sum` against the
   bound to a domain this site is not, so the widget could only ever fail. Re-add it with
   a key registered for `able-bodied-man.github.io` if you want captcha back.
 - **`meta author`** no longer credits the template author.
+- **Asset cache busting.** `index.html` links `css/main.css?v=20261012` and
+  `js/main.js?v=20261012`. GitHub Pages caches assets for ~10 minutes and a normal
+  reload happily reuses the stale file, which made earlier CSS fixes look like they
+  never deployed. **Bump the `?v=` date whenever `css/main.css` or `js/main.js`
+  changes** so every visitor gets the new file without a hard refresh.
 
 ## Still to do
 
