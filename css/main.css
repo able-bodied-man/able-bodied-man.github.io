@@ -520,6 +520,14 @@ input[type="submit"]:focus {
   max-width: calc(100% - 380px);
 }
 
+/* Clip the panels to the content column. The section animations translate and rotate
+   the panel far outside this box, so without clipping a transition sweeps across the
+   sidebar (and the page frame) before landing - the sidebar's right edge is this
+   element's left edge, so nothing can cover it once the overflow is hidden. */
+.content-area {
+  overflow: hidden;
+}
+
 .animated-sections {
   position: relative;
   height: 100%;
