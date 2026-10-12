@@ -1135,6 +1135,22 @@ textarea.form-control, textarea.form-control:focus {
   position: relative;
 }
 
+/* per-view sizing, mirroring the Owl configs: testimonials 1 below 768px and 2 from there;
+   clients 2 | 4 | 5 across the same breakpoints */
+.testimonials .carousel-track { gap: 25px; }
+.testimonials .carousel-slide { flex-basis: 100%; }
+.clients .carousel-track { gap: 10px; }
+.clients .carousel-slide { flex-basis: calc((100% - 10px) / 2); }
+
+@media only screen and (min-width: 768px) {
+  .testimonials .carousel-slide { flex-basis: calc((100% - 25px) / 2); }
+  .clients .carousel-slide { flex-basis: calc((100% - 30px) / 4); }
+}
+
+@media only screen and (min-width: 1200px) {
+  .clients .carousel-slide { flex-basis: calc((100% - 40px) / 5); }
+}
+
 /* the rotation's slides are absolutely stacked, so they must be un-hidden explicitly: the
    catch-all .text-rotation .item rule above hides the words until the module has wrapped them */
 .text-rotation.carousel .carousel-slide {
