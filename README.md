@@ -45,6 +45,14 @@ Verify with `curl -s https://able-bodied-man.github.io/ | sha256sum` against the
 - **reCAPTCHA removed.** The template shipped its author's reCAPTCHA site key, which is
   bound to a domain this site is not, so the widget could only ever fail. Re-add it with
   a key registered for `able-bodied-man.github.io` if you want captcha back.
+- **jQuery 3 compatibility shim.** `js/jquery3-compat.js` loads immediately after jQuery 4.0 and
+  restores the nine helpers jQuery 4 removed (`$.camelCase`, `$.trim`, `$.type`, `$.isFunction`,
+  `$.isArray`, `$.isNumeric`, `$.now`, `$.parseJSON`, `$.nodeName`). Two dependencies still call
+  them: Owl Carousel 2.3.4 (camelCase/type/isNumeric) and validator.js 0.11.9 (trim). Both are the
+  final releases of unmaintained projects, so the shim keeps them working instead of patching them;
+  **delete it together with those two libraries** if they are ever replaced. Verified against
+  jQuery 3.7.1 as a control: identical carousel DOM, autoplay, nav, masonry, filter, lightbox,
+  validation and transition behaviour.
 - **Modernizr is a custom build.** `js/modernizr.custom.js` is generated from `modernizr-config.json` (5 detects + `prefixed`, minified) with `npx modernizr -c modernizr-config.json -d js/modernizr.custom.js` - the site only needs `cssanimations` and `prefixed`, and upstream ships no prebuilt bundle.
 - **`meta author`** no longer credits the template author.
 - **Asset cache busting.** Every local `css/` and `js/` asset is linked with a shared
