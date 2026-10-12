@@ -86,13 +86,19 @@ function buildDots(root, embla, legacy) {
  */
 function setupRotation(root, kids, spec) {
   root.classList.add('carousel', 'carousel-fade');
+  const track = root.querySelector('.carousel-track');
   const sizeRoot = () => { root.style.height = kids[0].offsetHeight + 'px'; };
+  const THRESHOLD = 40; // deliberate gesture distance, in px
+
   let current = 0;
   let timer = null;
+  let dragging = false;
+  let startX = 0;
+  let dx = 0;
 
   const clear = (el) => el.classList.remove('animated-section-scaleUp', 'animated-section-scaleDown');
 
-  const show = (el, cls) => {
+  const play = (el, cls) => {
     void el.offsetWidth; // restart from the first keyframe
     el.classList.add(cls);
     el.addEventListener('animationend', function done() {
@@ -101,17 +107,18 @@ function setupRotation(root, kids, spec) {
     }, { once: true });
   };
 
-  const advance = () => {
+  // move one word: step is +1 for the next, -1 for the previous
+  const go = (step) => {
     const prev = current;
-    current = (current + 1) % kids.length;
+    current = (current + step + kids.length) % kids.length;
     kids.forEach((el, i) => {
       clear(el);
       el.classList.toggle('is-active', i === current);
       if (i === current) {
-        show(el, 'animated-section-scaleUp');
+        play(el, 'animated-section-scaleUp');
       } else if (i === prev) {
         el.classList.add('is-active'); // stays visible while it animates out
-        show(el, 'animated-section-scaleDown');
+        play(el, 'animated-section-scaleDown');
         el.addEventListener('animationend', function done() {
           el.classList.remove('is-active');
           el.removeEventListener('animationend', done);
@@ -120,14 +127,61 @@ function setupRotation(root, kids, spec) {
     });
   };
 
+  const settle = () => {
+    track.style.transition = 'transform 0.3s ease';
+    track.style.transform = 'translate3d(0px, 0px, 0px)';
+  };
+
+  // Owl dragged on mouse and touch and moved its stage with the pointer, then snapped back
+  // over ~250ms; the items themselves never moved, which is why their transform stayed at zero.
+  // Same here: the translation lives on the track, so the word's own scaleUp/scaleDown - which
+  // only animates scale() - resolves its start transform to none.
+  const endDrag = () => {
+    if (!dragging) { return; }
+    dragging = false;
+    root.classList.remove('is-dragging');
+    if (Math.abs(dx) >= THRESHOLD) { go(dx < 0 ? 1 : -1); }
+    dx = 0;
+    settle();
+    restartTimer();
+  };
+
+  const restartTimer = () => {
+    clearInterval(timer);
+    // 3.8s between words, and never mid-drag
+    timer = setInterval(() => { if (!dragging) { go(1); } }, spec.autoplay || 3800);
+  };
+
+  root.addEventListener('pointerdown', (e) => {
+    if (e.pointerType === 'mouse' && e.button !== undefined && e.button !== 0) { return; }
+    dragging = true;
+    startX = e.clientX;
+    dx = 0;
+    root.classList.add('is-dragging');
+    track.style.transition = 'none';
+    if (root.setPointerCapture && e.pointerId !== undefined) {
+      try { root.setPointerCapture(e.pointerId); } catch (err) { /* capture is a nicety, not required */ }
+    }
+  });
+
+  root.addEventListener('pointermove', (e) => {
+    if (!dragging) { return; }
+    dx = e.clientX - startX;
+    track.style.transform = 'translate3d(' + dx + 'px, 0px, 0px)';
+  });
+
+  root.addEventListener('pointerup', endDrag);
+  root.addEventListener('pointercancel', endDrag);
+
   kids.forEach((el, i) => { clear(el); el.classList.toggle('is-active', i === 0); });
   sizeRoot();
-  timer = setInterval(advance, spec.autoplay || 3800);
+  restartTimer();
   window.addEventListener('resize', sizeRoot);
 
   root.lmCarousel = {
     kind: 'rotator',
-    advance: advance,
+    go: go,
+    advance: () => go(1),
     destroy: () => { clearInterval(timer); root.lmCarousel = null; }
   };
   return root.lmCarousel;

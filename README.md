@@ -67,8 +67,12 @@ Verify with `curl -s https://able-bodied-man.github.io/ | sha256sum` against the
   its keyframes and the scale .8 crossover are unchanged, and both words animate simultaneously over
   the 1s Owl's own stylesheet forced on `.animated` (`main.css` sets that duration explicitly because
   Owl's rules are no longer loaded). Autoplay is a plain 3.8s interval with no hover pause, matching
-  Owl's `autoplayTimeout: 3800` / `autoplayHoverPause: false`. Both Embla plugins were measured as
-  unnecessary here and are not vendored.
+  Owl's `autoplayTimeout: 3800` / `autoplayHoverPause: false`. It also keeps Owl's drag: pressing and
+  moving horizontally carries the words with the pointer, releasing past 40px steps one word (left =
+  next, right = previous), anything shorter snaps back, and it settles over 0.3s. That translation
+  lives on the track, never on the word, so the word's own `scaleUp`/`scaleDown` still resolves its
+  start transform to `none` - the reason the rotation runs without a carousel library at all. Both
+  Embla plugins were measured as unnecessary here and are not vendored.
   The portfolio detail fragments call the same factory through `window.lmCarousel` and keep the old
   Owl class names on their controls (`legacyClasses`) because `main.css` already styles that
   carousel through them. **To replace the three page carousel configs, edit `SPECS` in

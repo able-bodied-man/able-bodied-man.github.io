@@ -1161,6 +1161,12 @@ textarea.form-control, textarea.form-control:focus {
 /* the rotation changes word exactly as it did under Owl: js/carousel.js puts the theme's own
    .animated-section-scaleDown on the leaving word and .animated-section-scaleUp on the arriving
    one, so the keyframes, the .7s duration and the scale .8 crossover are the theme's, unchanged */
+.text-rotation.carousel {
+  -ms-touch-action: pan-y;
+  touch-action: pan-y; /* drag horizontally, still scroll the page vertically */
+  cursor: default;
+}
+
 .text-rotation.carousel-fade .carousel-slide {
   position: absolute;
   top: 0;
@@ -1175,6 +1181,12 @@ textarea.form-control, textarea.form-control:focus {
 
 /* Owl's own stylesheet forced 1000ms on anything carrying .animated, so the theme's .7s never
    applied to this rotation. Measured from the backup: both words animate over 1s, simultaneously. */
+.text-rotation.carousel {
+  -ms-touch-action: pan-y;
+  touch-action: pan-y; /* drag horizontally, still scroll the page vertically */
+  cursor: default;
+}
+
 .text-rotation.carousel-fade .carousel-slide {
   -webkit-animation-duration: 1s;
   animation-duration: 1s;
