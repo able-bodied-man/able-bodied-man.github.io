@@ -625,6 +625,17 @@ input[type="submit"]:focus {
 }
 /* --- End Custom ScrollBar Customization --- */
 
+/* The plugin only absolutely-positions its rails via selectors scoped to a container
+   that carries its own .ps class. A section that misses that class leaves the y-rail
+   in normal flow as a 583px block element below .section-content, which renders as a
+   large empty scrollable area (clearest on the Contact page, under the Send button).
+   main.css loads after css/perfect-scrollbar.css, so this same-specificity selector
+   wins on document order and restores the overlay position. */
+.animated-section > .ps__scrollbar-y-rail,
+.animated-section > .ps__scrollbar-x-rail {
+  position: absolute;
+}
+
 .page-title {
   display: inline-block;
   position: relative;
