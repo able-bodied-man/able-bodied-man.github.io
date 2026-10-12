@@ -1,16 +1,8 @@
-
-
 /* Box sizing rules */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
-}
-
-/* Remove default padding */
-ul,
-ol {
-  padding: 0;
 }
 
 /* Remove default margin */
@@ -20,29 +12,29 @@ h2,
 h3,
 h4,
 p,
-ul,
-ol,
-li,
 figure,
-figcaption,
 blockquote,
 dl,
 dd {
   margin: 0;
 }
 
+/* Remove list styles on ul, ol elements with a list role, which suggests default styling will be removed */
+ul[role="list"],
+ol[role="list"] {
+  list-style: none;
+}
+
+/* Set core root defaults */
+html:focus-within {
+  scroll-behavior: smooth;
+}
+
 /* Set core body defaults */
 body {
   min-height: 100vh;
-  scroll-behavior: smooth;
   text-rendering: optimizeSpeed;
   line-height: 1.5;
-}
-
-/* Remove list styles on ul, ol elements with a class attribute */
-ul[class],
-ol[class] {
-  list-style: none;
 }
 
 /* A elements that don't have a class get default styles */
@@ -51,14 +43,10 @@ a:not([class]) {
 }
 
 /* Make images easier to work with */
-img {
+img,
+picture {
   max-width: 100%;
   display: block;
-}
-
-/* Natural flow and rhythm in articles by default */
-article > * + * {
-  margin-top: 1em;
 }
 
 /* Inherit fonts for inputs and buttons */
@@ -71,10 +59,46 @@ select {
 
 /* Remove all animations and transitions for people that prefer not to see them */
 @media (prefers-reduced-motion: reduce) {
-  * {
+  html:focus-within {
+   scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* ---------------------------------------------------------------------------------------------
+   Project additions, carried over from the vendored modern-css-reset 1.0.4 this theme was built
+   against. After 1.0.4 upstream scoped its list reset to `ul[role="list"]` and dropped the global
+   list padding/margin rules, but every list in this markup - the nav rail, socials, knowledges,
+   portfolio filters and contact info - relies on the old behaviour. Measured difference when they
+   are left out: lists indent by 40px, regain 15px vertical margins, and the portfolio filter list
+   shows bullets again (which also pushed the portfolio grid down 15px). Keep these three rules
+   with the reset rather than restating them per list in main.css.
+   --------------------------------------------------------------------------------------------- */
+ul,
+ol {
+  padding: 0;
+}
+
+ul,
+ol,
+li {
+  margin: 0;
+}
+
+ul[class],
+ol[class] {
+  list-style: none;
+}
+
+/* Upstream 1.0.4 also carried a typographic rhythm rule for articles; blog-post-1.html uses one
+   <article>, and the reset zeroes paragraph margins, so paragraph spacing there depends on it. */
+article > * + * {
+  margin-top: 1em;
 }
