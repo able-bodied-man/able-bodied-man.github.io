@@ -532,7 +532,15 @@ var PageTransitions = (function ($, options) {
 
         // Check if the animation is supported by browser and reset the pages.
         if(!support) {
-            onEndAnimation($currentPage, $nextPage);
+            // No CSS animations: switch pages immediately. The argument order here used to
+            // be swapped (the wrapper was passed as $nextPage and $currentPage as the
+            // wrapper), which left resetPage() addressing the wrong elements, and the
+            // isAnimating lock was never released so the menu died after one click.
+            clearTimeout(animSafetyTimer);
+            endCurrentPage = false;
+            endNextPage = false;
+            isAnimating = false;
+            onEndAnimation($pageWrapper, $nextPage, $currentPage);
         }
 
     }
@@ -542,8 +550,14 @@ var PageTransitions = (function ($, options) {
     }
 
     function resetPage($nextPage, $currentPage) {
-        $currentPage.attr('class', $currentPage.data('originalClassList'));
-        $nextPage.attr('class', $nextPage.data('originalClassList') + ' section-active');
+        // Either selection can be empty: the first call runs before any section is current,
+        // and navigating to the section already shown skips the $nextPage lookup entirely.
+        if ($currentPage && $currentPage.length) {
+            $currentPage.attr('class', $currentPage.data('originalClassList'));
+        }
+        if ($nextPage && $nextPage.length) {
+            $nextPage.attr('class', $nextPage.data('originalClassList') + ' section-active');
+        }
     }
 
     return {
