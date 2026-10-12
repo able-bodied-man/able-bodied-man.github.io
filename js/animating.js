@@ -11,6 +11,7 @@ var PageTransitions = (function ($, options) {
         isAnimating = false,
         endCurrentPage = true,
         endNextPage = false,
+        animSafetyTimer = null,
         windowArea = $(window),
         animEndEventNames = {
             'WebkitAnimation'   : 'webkitAnimationEnd',
@@ -509,6 +510,19 @@ var PageTransitions = (function ($, options) {
                         isAnimating = false;
                     }
                 });
+
+                // Safety net. 'animationend' never arrives when the page is hidden (Chrome
+                // freezes the animation timeline in a background tab), when the animation is
+                // suppressed, or when a class no longer exists - and the isAnimating lock above
+                // would then ignore every menu click until a reload. Release the lock anyway.
+                clearTimeout(animSafetyTimer);
+                animSafetyTimer = setTimeout(function() {
+                    if (!isAnimating) { return; }
+                    endCurrentPage = false;
+                    endNextPage = false;
+                    isAnimating = false;
+                    onEndAnimation($pageWrapper, $nextPage, $currentPage);
+                }, 2500);
 
             }
             else {
