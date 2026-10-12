@@ -107,7 +107,8 @@ function setupRotation(root, kids, spec) {
     }, { once: true });
   };
 
-  // move one word: step is +1 for the next, -1 for the previous
+  // move one word: step is +1 for the next, -1 for the previous.
+  // returns the word that arrived, so a caller can wait for its entry animation.
   const go = (step) => {
     const prev = current;
     current = (current + step + kids.length) % kids.length;
@@ -125,6 +126,7 @@ function setupRotation(root, kids, spec) {
         }, { once: true });
       }
     });
+    return kids[current];
   };
 
   // while dragging the words are laid out side by side, so the track has to sit at the current
@@ -138,15 +140,23 @@ function setupRotation(root, kids, spec) {
     // a word caught mid-fade would otherwise drag at its animated opacity; Owl's items were
     // always fully visible while dragging, so settle the transition first
     kids.forEach((el, i) => { clear(el); el.classList.toggle('is-active', i === current); });
-    root.classList.add('is-dragging');
+    root.classList.add('is-dragging', 'is-row-layout');
     track.style.transition = 'none';
     track.style.transform = trackOffset();
   };
 
+  // back to the stacked layout the fade needs - only safe once nothing is animating, otherwise
+  // a half-faded word would jump sideways when the layout changes under it
   const endDragLayout = () => {
-    root.classList.remove('is-dragging');
+    root.classList.remove('is-dragging', 'is-row-layout');
     track.style.transition = 'none';
     track.style.transform = 'translate3d(0px, 0px, 0px)';
+  };
+
+  const slideTrackTo = (index, ms) => {
+    const w = root.clientWidth || root.offsetWidth || 1;
+    track.style.transition = 'transform ' + ms + 'ms ease';
+    track.style.transform = 'translate3d(' + (-index * w) + 'px, 0px, 0px)';
   };
 
   // Owl dragged on mouse and touch and moved its stage with the pointer, then snapped back
@@ -157,9 +167,17 @@ function setupRotation(root, kids, spec) {
     if (!dragging) { return; }
     dragging = false;
     if (Math.abs(dx) >= THRESHOLD) {
-      go(dx < 0 ? 1 : -1);
+      // the word that was coming in from the side takes over and slides to the centre
+      const arrived = go(dx < 0 ? 1 : -1);
       dx = 0;
-      endDragLayout();
+      root.classList.remove('is-dragging'); // the hand relaxes, the row layout stays for the slide
+      slideTrackTo(current, 300);
+      const settle = () => {
+        arrived.removeEventListener('animationend', settle);
+        endDragLayout();
+      };
+      if (arrived) { arrived.addEventListener('animationend', settle, { once: true }); }
+      setTimeout(settle, 1400); // guard if the animation never reports
     } else {
       // not far enough: spring back to the word we came from, then restore the fade layout
       track.style.transition = 'transform 0.25s ease';

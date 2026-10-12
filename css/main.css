@@ -1177,14 +1177,15 @@ textarea.form-control, textarea.form-control:focus {
   cursor: grabbing;
 }
 
-/* while the pointer is down the words sit side by side, so the next one is already visible
-   entering from the side - the phone-swipe feel - instead of the stacked fade layout */
-.text-rotation.carousel.is-dragging .carousel-track {
+/* while dragging - and until the word that arrives has finished fading in - the words sit side
+   by side, so the next one is visible entering from the side and can slide to the centre on
+   release, instead of the stacked layout used for the in-place fade */
+.text-rotation.carousel.is-row-layout .carousel-track {
   display: flex;
   align-items: flex-start;
 }
 
-.text-rotation.carousel.is-dragging .carousel-slide {
+.text-rotation.carousel.is-row-layout .carousel-slide {
   position: relative;
   top: auto;
   left: auto;
@@ -1222,14 +1223,15 @@ textarea.form-control, textarea.form-control:focus {
   cursor: grabbing;
 }
 
-/* while the pointer is down the words sit side by side, so the next one is already visible
-   entering from the side - the phone-swipe feel - instead of the stacked fade layout */
-.text-rotation.carousel.is-dragging .carousel-track {
+/* while dragging - and until the word that arrives has finished fading in - the words sit side
+   by side, so the next one is visible entering from the side and can slide to the centre on
+   release, instead of the stacked layout used for the in-place fade */
+.text-rotation.carousel.is-row-layout .carousel-track {
   display: flex;
   align-items: flex-start;
 }
 
-.text-rotation.carousel.is-dragging .carousel-slide {
+.text-rotation.carousel.is-row-layout .carousel-slide {
   position: relative;
   top: auto;
   left: auto;
