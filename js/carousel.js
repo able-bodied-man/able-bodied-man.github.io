@@ -182,7 +182,8 @@ function setup(root, spec) {
 }
 
 const SPECS = [
-  { sel: '.text-rotation',   spec: { loop: true,  autoplay: 3800, fade: true } },
+  // the rotation never had controls: Owl was configured with nav: false and dots: false
+  { sel: '.text-rotation',   spec: { loop: true,  autoplay: 3800, fade: true, arrows: false, dots: false } },
   { sel: '.testimonials',    spec: { loop: false, perView: { sm: 1, md: 2, lg: 2 } } },
   { sel: '.clients',         spec: { loop: false, perView: { sm: 2, md: 4, lg: 5 } } }
 ];
