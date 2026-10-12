@@ -524,24 +524,25 @@ var PageTransitions = (function ($, options) {
                     onEndAnimation($pageWrapper, $nextPage, $currentPage);
                 }, 2500);
 
+                // Browsers without CSS animation support never fire animationend, so complete
+                // the switch at once. This must live inside the transition branch: running it
+                // unconditionally also fired when the target was the page already shown, where
+                // $nextPage does not exist and resetPage() would strip .section-active off the
+                // page the visitor is looking at.
+                if (!support) {
+                    clearTimeout(animSafetyTimer);
+                    endCurrentPage = false;
+                    endNextPage = false;
+                    isAnimating = false;
+                    onEndAnimation($pageWrapper, $nextPage, $currentPage);
+                }
+
             }
             else {
                 isAnimating = false;
             }
 
 
-        // Check if the animation is supported by browser and reset the pages.
-        if(!support) {
-            // No CSS animations: switch pages immediately. The argument order here used to
-            // be swapped (the wrapper was passed as $nextPage and $currentPage as the
-            // wrapper), which left resetPage() addressing the wrong elements, and the
-            // isAnimating lock was never released so the menu died after one click.
-            clearTimeout(animSafetyTimer);
-            endCurrentPage = false;
-            endNextPage = false;
-            isAnimating = false;
-            onEndAnimation($pageWrapper, $nextPage, $currentPage);
-        }
 
     }
 
