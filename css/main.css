@@ -3084,3 +3084,20 @@ blockquote {
   opacity: .75;
 }
 /* /Alerts */
+
+/* The copyright line is absolutely positioned, but .header is not a containing block
+   at desktop widths - so it was anchored to .page-content and landed under the sidebar
+   only because that frame's left edge happens to equal the sidebar's left edge and the
+   two widths happened to match. Make the sidebar the containing block and let the box
+   track its width, so the line centres in the sidebar at every width. Scoped to the
+   desktop range because the <=1024px layout positions .header absolutely. */
+@media only screen and (min-width: 1025px) {
+  .header {
+    position: relative;
+  }
+  .header .copyrights {
+    width: auto;
+    left: 0;
+    right: 0;
+  }
+}
