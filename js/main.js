@@ -306,7 +306,7 @@
 
         //Google Maps
         if ($(".lmpixels-map")[0]){
-            var address = 'Macau SAR', // location shown on the contact map
+            var address = "Ruins of Saint Paul's", // location shown on the contact map
                 address = encodeURIComponent(address),
                 src = 'https://maps.google.com/maps?q=' + address + '&t=m&z=16&output=embed&iwloc=near';
             $(".lmpixels-map iframe").attr("src", src);
