@@ -8,26 +8,30 @@
 (function($) {
 "use strict";
     // Portfolio subpage filters
+    // Shuffle 6 has no jQuery wrapper, so the grid gets a single instance and its explicit
+    // API. filter() takes a category and matches the JSON in each item's data-groups
+    // attribute (filterMode 'any'), so the template's existing markup keeps working.
     function portfolio_init() {
-        var portfolio_grid = $('.portfolio-grid'),
-            portfolio_filter = $('.portfolio-filters');
-            
-        if (portfolio_grid) {
+        var grid = document.querySelector('.portfolio-grid');
 
-            portfolio_grid.shuffle({
-                speed: 450,
-                itemSelector: 'figure'
-            });
-
-            portfolio_filter.on("click", ".filter", function (e) {
-                portfolio_grid.shuffle('update');
-                e.preventDefault();
-                $('.portfolio-filters .filter').parent().removeClass('active');
-                $(this).parent().addClass('active');
-                portfolio_grid.shuffle('shuffle', $(this).attr('data-group') );
-            });
-
+        if (!grid || typeof Shuffle === 'undefined') {
+            return;
         }
+
+        var shuffleInstance = new Shuffle(grid, {
+            itemSelector: 'figure',
+            speed: 450,
+            filterMode: Shuffle.FilterMode.ANY
+        });
+
+        $('.portfolio-filters').on("click", ".filter", function (e) {
+            e.preventDefault();
+            $('.portfolio-filters .filter').parent().removeClass('active');
+            $(this).parent().addClass('active');
+
+            var group = $(this).attr('data-group');
+            shuffleInstance.filter(group === 'category_all' ? Shuffle.ALL_ITEMS : group);
+        });
     }
     // /Portfolio subpage filters
 
