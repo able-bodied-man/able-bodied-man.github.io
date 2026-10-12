@@ -237,6 +237,22 @@ function setupRotation(root, kids, spec) {
   root.addEventListener('pointerup', endDrag);
   root.addEventListener('pointercancel', endDrag);
 
+  // invariant guard: exactly one word carries is-active, and the track is never left offset while
+  // the stacked layout is in force (that combination blanks the line until autoplay next fires).
+  // Normally a no-op - it only repairs a state some race left behind.
+  const guard = () => {
+    if (dragging) { return; }
+    const active = kids.filter((el) => el.classList.contains('is-active'));
+    if (active.length !== 1) {
+      kids.forEach((el, i) => el.classList.toggle('is-active', i === current));
+    }
+    if (!root.classList.contains('is-row-layout') && track.style.transform && track.style.transform !== 'translate3d(0px, 0px, 0px)') {
+      track.style.transition = 'none';
+      track.style.transform = 'translate3d(0px, 0px, 0px)';
+    }
+  };
+  setInterval(guard, 250);
+
   kids.forEach((el, i) => { clear(el); el.classList.toggle('is-active', i === 0); });
   sizeRoot();
   restartTimer();
