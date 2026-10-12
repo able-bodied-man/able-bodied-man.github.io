@@ -77,6 +77,62 @@ function buildDots(root, embla, legacy) {
   return dots;
 }
 
+/*
+ * The role rotation is a text rotator, not a carousel anyone navigates: one word in place, no
+ * dragging, no arrows. Embla positioned its slides, and that positioning showed up in the
+ * animation's start transform (the words carried a slide-width translate, so they slid sideways
+ * while they faded). Owl's version carried none. So this one runs without a carousel library at
+ * all - just the theme's own scaleUp/scaleDown classes and a 3.8s timer, exactly as Owl did.
+ */
+function setupRotation(root, kids, spec) {
+  root.classList.add('carousel', 'carousel-fade');
+  const sizeRoot = () => { root.style.height = kids[0].offsetHeight + 'px'; };
+  let current = 0;
+  let timer = null;
+
+  const clear = (el) => el.classList.remove('animated-section-scaleUp', 'animated-section-scaleDown');
+
+  const show = (el, cls) => {
+    void el.offsetWidth; // restart from the first keyframe
+    el.classList.add(cls);
+    el.addEventListener('animationend', function done() {
+      el.classList.remove(cls);
+      el.removeEventListener('animationend', done);
+    }, { once: true });
+  };
+
+  const advance = () => {
+    const prev = current;
+    current = (current + 1) % kids.length;
+    kids.forEach((el, i) => {
+      clear(el);
+      el.classList.toggle('is-active', i === current);
+      if (i === current) {
+        show(el, 'animated-section-scaleUp');
+      } else if (i === prev) {
+        el.classList.add('is-active'); // stays visible while it animates out
+        show(el, 'animated-section-scaleDown');
+        el.addEventListener('animationend', function done() {
+          el.classList.remove('is-active');
+          el.removeEventListener('animationend', done);
+        }, { once: true });
+      }
+    });
+  };
+
+  kids.forEach((el, i) => { clear(el); el.classList.toggle('is-active', i === 0); });
+  sizeRoot();
+  timer = setInterval(advance, spec.autoplay || 3800);
+  window.addEventListener('resize', sizeRoot);
+
+  root.lmCarousel = {
+    kind: 'rotator',
+    advance: advance,
+    destroy: () => { clearInterval(timer); root.lmCarousel = null; }
+  };
+  return root.lmCarousel;
+}
+
 function setup(root, spec) {
   if (root.lmCarousel) { return root.lmCarousel; }
 
@@ -86,6 +142,10 @@ function setup(root, spec) {
   kids.forEach((el) => { el.classList.add('carousel-slide'); track.appendChild(el); });
   root.classList.add('carousel');
   root.insertBefore(track, root.firstChild);
+
+  // the rotation is a text rotator: it gets no carousel instance at all, so nothing can
+  // translate its words and the animation's start transform stays at zero
+  if (spec.fade) { return setupRotation(root, kids, spec); }
 
   const plugins = [];
 
@@ -98,50 +158,6 @@ function setup(root, spec) {
     draggable: true,
     plugins: plugins
   });
-
-  if (spec.fade) {
-    // Owl ran the theme's own animateOut/animateIn pair here: the leaving word played
-    // .animated-section-scaleDown (fade to opacity 0 while shrinking to scale .8, .7s) and the
-    // arriving word played .animated-section-scaleUp (from opacity 0 / scale .8, .7s). Reuse those
-    // exact classes so the effect, its timing and its keyframes are the ones already in the theme.
-    root.classList.add('carousel-fade');
-    const sizeRoot = () => { root.style.height = kids[0].offsetHeight + 'px'; };
-    let current = -1;
-
-    const swap = () => {
-      const next = embla.selectedScrollSnap();
-      if (next === current) { return; }
-      const prev = current;
-      current = next;
-      kids.forEach((el, i) => {
-        el.classList.remove('animated-section-scaleUp', 'animated-section-scaleDown');
-        el.classList.toggle('is-active', i === next);
-        if (i === next) {
-          if (prev !== -1) {
-            void el.offsetWidth; // restart the animation from its first keyframe
-            el.classList.add('animated-section-scaleUp');
-            el.addEventListener('animationend', function done() {
-              el.classList.remove('animated-section-scaleUp');
-              el.removeEventListener('animationend', done);
-            }, { once: true });
-          }
-        } else if (i === prev) {
-          // the leaving word has to stay visible while it animates out
-          el.classList.add('is-active', 'animated-section-scaleDown');
-          el.addEventListener('animationend', function done() {
-            el.classList.remove('animated-section-scaleDown', 'is-active');
-            el.removeEventListener('animationend', done);
-          }, { once: true });
-        }
-      });
-    };
-
-    embla.on('select', swap);
-    embla.on('reInit', () => { sizeRoot(); swap(); });
-    sizeRoot();
-    swap();
-    window.addEventListener('resize', sizeRoot);
-  }
 
   if (spec.autoplay) {
     // Owl ran with autoplayTimeout: 3800 and autoplayHoverPause: false, so this is a plain
@@ -183,7 +199,7 @@ function setup(root, spec) {
 
 const SPECS = [
   // the rotation never had controls: Owl was configured with nav: false and dots: false
-  { sel: '.text-rotation',   spec: { loop: true,  autoplay: 3800, fade: true, arrows: false, dots: false } },
+  { sel: '.text-rotation',   spec: { fade: true, autoplay: 3800, arrows: false, dots: false } },
   { sel: '.testimonials',    spec: { loop: false, perView: { sm: 1, md: 2, lg: 2 } } },
   { sel: '.clients',         spec: { loop: false, perView: { sm: 2, md: 4, lg: 5 } } }
 ];
