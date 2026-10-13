@@ -2958,7 +2958,10 @@ blockquote {
   top: 24px;
   left: -88px;
   width: 240px;
-  padding: 5px 0 0;      /* the label sits low in the band, away from the corner tip */
+  /* padding chosen so the label's ink centre coincides with the band's centre line: Poppins at
+     700/10px reports an 11px font ascent and 4px descent in a 12px line box, so a 2.5px top
+     padding puts the 7px-tall cap ink in the middle of the 17px band. */
+  padding: 2.5px 0;
   background-color: #5050f5;
   color: #ffffff;
   font-size: 10px;
