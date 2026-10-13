@@ -1091,13 +1091,6 @@ textarea.form-control, textarea.form-control:focus {
   margin-bottom: 15px;
 }
 
-/* ten tiles across leave each about 65px at a 1280 viewport, and the 15px padding above
-   would hand the logo only 35px of that - the wall takes a token inset instead, so the
-   image gets the whole tile and the marks render at roughly twice their old height */
-.clients .client-block {
-  padding: 4px 0;
-}
-
 .client-block {
   text-align: center;
   padding: 5px 0;
@@ -1109,12 +1102,6 @@ textarea.form-control, textarea.form-control:focus {
   -ms-transition: all 0.2s ease-in-out;
   transition: all 0.2s ease-in-out;
 }
-/* with ten tiles across at desktop width the wall fits exactly, so both arrows sit at an
-   end and do nothing - hide them rather than leave two dead controls */
-.clients.is-at-start.is-at-end .carousel-nav {
-  display: none;
-}
-
 /* --- End of Clients --- */
 
 /* --- Carousels (Embla Carousel 8, replacing Owl 2) ---
@@ -1185,11 +1172,11 @@ textarea.form-control, textarea.form-control:focus {
 
 @media only screen and (min-width: 768px) {
   .testimonials .carousel-slide { flex-basis: calc((100% - 33px) / 2); }
-  .clients .carousel-slide { flex-basis: calc((100% - 40px) / 5); }
+  .clients .carousel-slide { flex-basis: calc((100% - 30px) / 4); }
 }
 
 @media only screen and (min-width: 1200px) {
-  .clients .carousel-slide { flex-basis: calc((100% - 90px) / 10); }
+  .clients .carousel-slide { flex-basis: calc((100% - 40px) / 5); }
 }
 
 /* the rotation's slides are absolutely stacked, so they must be un-hidden explicitly: the
