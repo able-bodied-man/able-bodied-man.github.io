@@ -2921,7 +2921,7 @@ blockquote {
   border-color: #d5d5d5;
   color: #f5f5f5;
   background-color: transparent;
-  border-radius: 8px;   /* the pills around it are 30px; this one sits squarer */
+  border-radius: 12px;  /* the pills around it are 30px; this one sits squarer */
 }
 
 /* The rule above outranks the theme's .btn-secondary:hover, so the hover state is restated
