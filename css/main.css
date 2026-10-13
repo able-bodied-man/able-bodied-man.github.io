@@ -2919,8 +2919,9 @@ blockquote {
    border width, transition) and only swaps the two colours. */
 .fw-pricing .fw-package-wrap .fw-button-row .btn-inverse {
   border-color: #d5d5d5;
-  color: #5050f5;
+  color: #f5f5f5;
   background-color: transparent;
+  border-radius: 8px;   /* the pills around it are 30px; this one sits squarer */
 }
 
 /* The rule above outranks the theme's .btn-secondary:hover, so the hover state is restated
