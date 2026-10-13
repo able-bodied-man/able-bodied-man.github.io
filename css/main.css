@@ -2913,6 +2913,25 @@ blockquote {
   }
 }
 
+/* The second call to action under the middle card's feature list states the tier button's
+   colours the other way round: the tier button is an indigo boundary with light text, this one
+   a light boundary with indigo text. It keeps .btn-secondary for the button base (padding,
+   border width, transition) and only swaps the two colours. */
+.fw-pricing .fw-package-wrap .fw-button-row .btn-inverse {
+  border-color: #d5d5d5;
+  color: #5050f5;
+  background-color: transparent;
+}
+
+/* The rule above outranks the theme's .btn-secondary:hover, so the hover state is restated
+   here rather than left dead: the theme fills a secondary button light and darkens its text. */
+.fw-pricing .fw-package-wrap .fw-button-row .btn-inverse:hover,
+.fw-pricing .fw-package-wrap .fw-button-row .btn-inverse:focus {
+  border-color: #d5d5d5;
+  color: #333;
+  background-color: #d5d5d5;
+}
+
 .fw-pricing .fw-pricing-row {
   padding: 30px 0 10px;
 }
