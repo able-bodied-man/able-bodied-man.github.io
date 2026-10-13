@@ -309,10 +309,22 @@ function setup(root, spec) {
   // translate its words and the animation's start transform stays at zero
   if (spec.fade) { return setupRotation(root, kids, spec); }
 
+  // Embla wants the clipping on a wrapper, not on the element it translates. The theme clipped
+  // the track itself, which meant Chrome never painted the slides that started outside it: on the
+  // client wall the sixth logo stayed blank when the next arrow brought it in. Same geometry, the
+  // clip simply lives one level up - and the container is named explicitly because Embla would
+  // otherwise take the wrapper as the container.
+  const viewport = document.createElement('div');
+  viewport.className = 'carousel-viewport';
+  root.insertBefore(viewport, track);
+  viewport.appendChild(track);
+
   const plugins = [];
 
-  // Embla's first argument is the ROOT; its first element child must be the container.
+  // Embla's first argument is the ROOT; the container is named explicitly above so this works
+  // whether or not a viewport wrapper sits between them.
   const embla = EmblaCarousel(root, {
+    container: track,
     loop: !!spec.loop,
     align: 'start',
     containScroll: spec.loop ? false : 'trimSnaps',

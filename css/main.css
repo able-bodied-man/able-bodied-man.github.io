@@ -1116,7 +1116,10 @@ textarea.form-control, textarea.form-control:focus {
 /* The arrows are positioned 52px above the carousel, so the carousel itself must not clip: an
    ancestor with overflow: hidden clips absolutely positioned children whose containing block it
    is, which made the arrows invisible. Owl kept its overflow on an inner stage for this reason.
-   Clipping now happens on the track, which is where the slides actually move. The rotation keeps
+   Clipping happens on a .carousel-viewport wrapper around the track, never on the track itself:
+   the track is the element being translated, and clipping the translated element stops
+   Chrome painting the slides that enter the view after it moved - a logo revealed by the
+   client wall's next arrow stayed blank. The rotation keeps its overflow on the root.
    it on the root instead - its slides are absolute inside a zero-height track and it has no nav. */
 /* the arrows sit outside the carousel box, so no carousel may clip or cover them - same stacking
    Owl had via its own z-index: 1; the slides are clipped by .carousel-track instead */
@@ -1127,7 +1130,7 @@ textarea.form-control, textarea.form-control:focus {
   z-index: 1;
 }
 
-.carousel-track {
+.carousel-viewport {
   overflow: hidden;
 }
 
