@@ -2933,6 +2933,46 @@ blockquote {
   background-color: #d5d5d5;
 }
 
+/* Best Seller corner ribbon on the Ultra card - the banner a book listing wears. The wrapper
+   sits on the card's top-left corner and clips the band to the card edge; its own top-left
+   corner is rounded to the card's 15px so the ribbon does not square that corner off. The
+   band's inner edge runs through the corner point, which is what makes it hang off the corner
+   instead of floating across the middle of the card. */
+.fw-pricing .fw-package-wrap.able-ultra .fw-package {
+  position: relative;
+}
+
+.fw-pricing .fw-ribbon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 128px;
+  height: 128px;
+  overflow: hidden;
+  border-top-left-radius: 15px;
+  pointer-events: none;
+}
+
+.fw-pricing .fw-ribbon span {
+  position: absolute;
+  top: -9px;
+  left: -79px;
+  width: 200px;
+  padding: 16px 0;
+  background-color: #f0a500;
+  color: #1e1e1e;
+  font-size: 11px;
+  line-height: 1.2;      /* two short lines read better than one long one across a 45 deg band */
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  text-align: center;
+  -webkit-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  -o-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}
+
 .fw-pricing .fw-pricing-row {
   padding: 30px 0 10px;
 }
