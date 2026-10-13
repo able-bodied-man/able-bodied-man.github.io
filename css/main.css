@@ -2955,15 +2955,15 @@ blockquote {
 
 .fw-pricing .fw-ribbon span {
   position: absolute;
-  top: 10px;
-  left: -94px;
+  top: 24px;
+  left: -88px;
   width: 240px;
-  padding: 11px 0;
+  padding: 2.5px 0;
   background-color: #5050f5;
   color: #ffffff;
   font-size: 10px;
   line-height: 1.2;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.5px;
   text-transform: uppercase;
   text-align: center;
