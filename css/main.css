@@ -1111,6 +1111,31 @@ textarea.form-control, textarea.form-control:focus {
    only used by the portfolio detail pages (the page carousels never showed visible dots). */
 .carousel {
   position: relative;
+}
+
+/* The arrows are positioned 52px above the carousel, so the carousel itself must not clip: an
+   ancestor with overflow: hidden clips absolutely positioned children whose containing block it
+   is, which made the arrows invisible. Owl kept its overflow on an inner stage for this reason.
+   Clipping now happens on the track, which is where the slides actually move. The rotation keeps
+   it on the root instead - its slides are absolute inside a zero-height track and it has no nav. */
+/* the arrows sit outside the carousel box, so no carousel may clip or cover them - same stacking
+   Owl had via its own z-index: 1; the slides are clipped by .carousel-track instead */
+.testimonials.carousel,
+.clients.carousel,
+.portfolio-page-carousel.carousel {
+  overflow: visible;
+  z-index: 1;
+}
+
+.carousel-track {
+  overflow: hidden;
+}
+
+.text-rotation .carousel-track {
+  overflow: visible;
+}
+
+.text-rotation.carousel {
   overflow: hidden;
 }
 
