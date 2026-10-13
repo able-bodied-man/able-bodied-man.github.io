@@ -1,0 +1,14 @@
+{
+  "name": "Able Gor — An Able-bodied Man's Toolbox",
+  "short_name": "Toolbox",
+  "description": "LEGO models, gadgets and jigsaw puzzles, plus the financial models and code behind them. Based in Macau.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#222222",
+  "theme_color": "#222222",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}
