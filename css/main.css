@@ -1102,6 +1102,39 @@ textarea.form-control, textarea.form-control:focus {
   -ms-transition: all 0.2s ease-in-out;
   transition: all 0.2s ease-in-out;
 }
+/* The wall lists what Able actually relies on, in the register of a partner logo wall: an
+   icon, the name and one deadpan line. The images are gone (no brand marks, no dead
+   links), and hovering raises the tile the way a logo wall highlights a partner. */
+.clients .client-block i {
+  display: block;
+  font-size: 34px;
+  color: #5050f5;
+  opacity: .85;
+}
+
+.clients .client-block .sponsor-name {
+  margin: 12px 0 4px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #d5d5d5;
+}
+
+.clients .client-block .sponsor-line {
+  margin: 0;
+  font-size: .85em;
+  color: #a5a6a7;
+}
+
+.clients .client-block:hover {
+  opacity: 1;
+}
+
+/* the lines run to different lengths, so stretch the tiles to the tallest to keep the
+   wall's bottom edge straight - Owl's logo images were all one height, text is not */
+.clients .carousel-track {
+  align-items: stretch;
+}
+
 /* --- End of Clients --- */
 
 /* --- Carousels (Embla Carousel 8, replacing Owl 2) ---
@@ -1172,11 +1205,11 @@ textarea.form-control, textarea.form-control:focus {
 
 @media only screen and (min-width: 768px) {
   .testimonials .carousel-slide { flex-basis: calc((100% - 33px) / 2); }
-  .clients .carousel-slide { flex-basis: calc((100% - 30px) / 4); }
+  .clients .carousel-slide { flex-basis: calc((100% - 20px) / 3); }
 }
 
 @media only screen and (min-width: 1200px) {
-  .clients .carousel-slide { flex-basis: calc((100% - 40px) / 5); }
+  .clients .carousel-slide { flex-basis: calc((100% - 30px) / 4); }
 }
 
 /* the rotation's slides are absolutely stacked, so they must be un-hidden explicitly: the
