@@ -1161,14 +1161,17 @@ textarea.form-control, textarea.form-control:focus {
 }
 
 /* per-view sizing, mirroring the Owl configs: testimonials 1 below 768px and 2 from there;
-   clients 2 | 4 | 5 across the same breakpoints */
+   clients 2 | 4 | 5 across the same breakpoints. A testimonial card carries its own 2px
+   side margins (4px per card - see .testimonial above) and Owl counted those inside the item
+   width; without subtracting them a pair of cards is 4px wider than the carousel, so the
+   trailing card's right border is clipped and Embla keeps an extra snap that stops mid-pair. */
 .testimonials .carousel-track { gap: 25px; }
-.testimonials .carousel-slide { flex-basis: 100%; }
+.testimonials .carousel-slide { flex-basis: calc(100% - 4px); }
 .clients .carousel-track { gap: 10px; }
 .clients .carousel-slide { flex-basis: calc((100% - 10px) / 2); }
 
 @media only screen and (min-width: 768px) {
-  .testimonials .carousel-slide { flex-basis: calc((100% - 25px) / 2); }
+  .testimonials .carousel-slide { flex-basis: calc((100% - 33px) / 2); }
   .clients .carousel-slide { flex-basis: calc((100% - 30px) / 4); }
 }
 
