@@ -2884,6 +2884,13 @@ blockquote {
   right: 0;
 }
 
+/* Able Ultra carries its own accent instead of the featured column's underline: bold and
+   indigo, which also keeps the underline exclusive to the highlighted tier */
+.fw-pricing .fw-package-wrap.able-ultra .fw-heading-row span {
+  font-weight: 700;
+  color: #5050f5;
+}
+
 .fw-pricing .fw-pricing-row {
   padding: 30px 0 10px;
 }
