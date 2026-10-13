@@ -2946,8 +2946,8 @@ blockquote {
   position: absolute;
   top: 0;
   left: 0;
-  width: 128px;
-  height: 128px;
+  width: 110px;
+  height: 110px;
   overflow: hidden;
   border-top-left-radius: 15px;
   pointer-events: none;
@@ -2955,15 +2955,15 @@ blockquote {
 
 .fw-pricing .fw-ribbon span {
   position: absolute;
-  top: -9px;
-  left: -79px;
-  width: 200px;
-  padding: 16px 0;
-  background-color: #f0a500;
-  color: #1e1e1e;
-  font-size: 11px;
-  line-height: 1.2;      /* two short lines read better than one long one across a 45 deg band */
-  font-weight: 700;
+  top: 10px;
+  left: -94px;
+  width: 240px;
+  padding: 11px 0;
+  background-color: #5050f5;
+  color: #ffffff;
+  font-size: 10px;
+  line-height: 1.2;
+  font-weight: 600;
   letter-spacing: 0.5px;
   text-transform: uppercase;
   text-align: center;
