@@ -2900,6 +2900,19 @@ blockquote {
   font-weight: 700;
 }
 
+/* Once the cards stack, the featured card's 5px lift stops reading as a lift and only skews the
+   spacing: 5px above it against 15px below, because the lift eats the gap on one side. In a
+   column there is nothing to be lifted above, so the transform goes back to none below the
+   grid's md breakpoint and all three cards sit 10px apart. */
+@media (max-width: 767px) {
+  .fw-pricing .fw-package-wrap.highlight-col .fw-package {
+    -webkit-transform: none;
+    -ms-transform: none;
+    -o-transform: none;
+    transform: none;
+  }
+}
+
 .fw-pricing .fw-pricing-row {
   padding: 30px 0 10px;
 }
