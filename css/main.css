@@ -2892,6 +2892,14 @@ blockquote {
   color: #5050f5;
 }
 
+/* Ultra's button says the same thing on hover: the words go bold and indigo. The theme's
+   own hover fills the button light grey, so the accent still reads against it. */
+.fw-pricing .fw-package-wrap.able-ultra .fw-button-row .btn-secondary:hover,
+.fw-pricing .fw-package-wrap.able-ultra .fw-button-row .btn-secondary:focus {
+  color: #5050f5;
+  font-weight: 700;
+}
+
 .fw-pricing .fw-pricing-row {
   padding: 30px 0 10px;
 }
