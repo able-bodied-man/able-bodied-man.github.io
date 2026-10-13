@@ -1244,6 +1244,59 @@ textarea.form-control, textarea.form-control:focus {
   animation-duration: 1s;
 }
 
+/* arrows. Same look and placement the theme gave Owl's nav: 28px rounded buttons, #444 fill,
+   Font Awesome chevrons, the accent on hover, sitting 52px above the carousel on the right. */
+.carousel-nav {
+  position: absolute;
+  text-align: right;
+  right: 0;
+  top: -52px;
+}
+
+.carousel-nav__btn {
+  position: relative;
+  display: inline-block;
+  background-color: #444;
+  border: 1px solid #444;
+  border-radius: 5px;
+  -webkit-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  font-family: "Font Awesome 7 Free";
+  font-size: 11px;
+  font-weight: 900;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #d5d5d5;
+  padding: 0;
+  cursor: pointer;
+}
+
+.carousel-nav__prev {
+  margin-right: 3px;
+}
+
+.carousel-nav__btn:before {
+  position: relative;
+  margin: 2px;
+  width: 22px;
+  height: 22px;
+  line-height: 22px;
+  text-align: center;
+  display: block;
+  cursor: pointer;
+  color: inherit;
+  z-index: 1;
+}
+
+.carousel-nav__prev:before { content: "\f053"; }
+.carousel-nav__next:before { content: "\f054"; }
+
+.carousel-nav__btn:hover {
+  background-color: #5050f5;
+  border-color: #5050f5;
+  color: #fff;
+}
+
 /* dots - portfolio detail pages only */
 .carousel-dots {
   display: inline-block;
