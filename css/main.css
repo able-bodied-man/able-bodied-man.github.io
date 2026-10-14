@@ -2917,6 +2917,18 @@ blockquote {
    colours the other way round: the tier button is an indigo boundary with light text, this one
    a light boundary with indigo text. It keeps .btn-secondary for the button base (padding,
    border width, transition) and only swaps the two colours. */
+/* The button under the feature list ends the middle card, so its 11.25px bottom margin and the
+   row's 20px bottom padding both stack on the card's own padding: the button ended up 63.3px
+   above the card's bottom edge where the other two cards show 39.8px under their last line.
+   Both are trimmed to leave the same 39.8px. */
+.fw-pricing .fw-package-wrap .fw-button-row.under-list {
+  padding-bottom: 11.8px;  /* measured against the painted ink, not the text's line box */
+}
+
+.fw-pricing .fw-package-wrap .fw-button-row.under-list .btn {
+  margin-bottom: 0;
+}
+
 .fw-pricing .fw-package-wrap .fw-button-row .btn-inverse {
   border-color: #d5d5d5;
   color: #f5f5f5;
